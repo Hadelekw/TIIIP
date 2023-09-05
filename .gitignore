@@ -1,1 +1,5 @@
 /venv/
+*.*~
+*.net.xml
+/__pycache__/
+/network_mixer/__pycache__/
