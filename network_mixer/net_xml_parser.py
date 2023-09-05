@@ -63,12 +63,13 @@ class Lane:
     """
 
     def __init__(
-            self, index:int,
-            allow:list, disallow:list,
-            change_left:list, change_right:list,
-            speed:float, width:float, end_offset:float,
-            shape:list, type:Type, acceleration:bool
+            self, id:str, index:int=0,
+            allow:list=[], disallow:list=[],
+            change_left:list=[], change_right:list=[],
+            speed:float=0, width:float=1, length=0, end_offset:float=0,
+            shape:list=[], type=None, acceleration:bool=False
     ):
+        self.id = id
         self.index = index
         self.allow = allow
         self.disallow = disallow
@@ -82,6 +83,12 @@ class Lane:
         self.acceleration = acceleration
 
 
+class Roundabout:
+    def __init__(self, nodes:list, edges:list):
+        self.nodes = nodes
+        self.edges = edges
+
+
 def change_dict_key_name(d, init_name, end_name):
     try:
         d[end_name] = d.pop(init_name)
@@ -93,7 +100,8 @@ def load_base_file():
     f = open(BASE_ROAD_FILE_PATH)
     root = et.parse(f).getroot()
     f.close()
-    edges = []
+    edges = {}
+    lanes = {}
     for child in root:
         if child.tag == 'edge':
             edge_dict = child.attrib
@@ -106,13 +114,25 @@ def load_base_file():
                 'bike_lane_width': 'bikeLaneWidth',
             }
             for key in names_to_change:
-                change_dict_key_name(edge_dict, names_to_change[key], names_to_change)
+                change_dict_key_name(edge_dict, names_to_change[key], key)
             try:
                 edge_dict['spread_type'] = SpreadType(edge_dict['spread_type'])
             except:
                 pass
-            edges.append(Edge(**edge_dict))
+            edges[edge_dict['id']] = Edge(**edge_dict)
+        for grandchild in child:
+            if grandchild.tag == 'lane':
+                lane_dict = grandchild.attrib
+                names_to_change = {
+                    'change_left': 'changeLeft',
+                    'change_right': 'changeRight',
+                    'end_offset': 'endOffset',
+                }
+                for key in names_to_change:
+                    change_dict_key_name(lane_dict, names_to_change[key], key)
+                lanes[lane_dict['id']] = Lane(**lane_dict)
     print(edges)
+    print(lanes)
 
 def load_file():
     pass
