@@ -2,4 +2,4 @@
 *.*~
 *.net.xml
 /__pycache__/
-/network_mixer/__pycache__/
+/*/__pycache__/
