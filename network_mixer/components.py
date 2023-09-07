@@ -89,15 +89,15 @@ class Edge(Component):
     def get_schema(self):
         schema = {
             'id': str,
-            'from': str,
-            'to': str,
+            'from': str,  # TODO
+            'to': str,  # TODO
             'type': self.get_type_class,
-            'function': str,
+            'function': str,  # TODO?
             'numLanes': int,
             'speed': float,
             'priority': int,
             'length': float,
-            'shape': list[float],
+            'shape': list[float],  # TODO
             'spreadType': SpreadType,
             'allow': self.get_vehicle_classes,
             'disallow': self.get_vehicle_classes,
@@ -129,14 +129,50 @@ class Lane(Component):
             'width': float,
             'length': float,
             'endOffset': float,
-            'shape': list,
+            'shape': list,  # TODO
             'type': self.get_type_class,
             'acceleration': bool,
         }
         return schema
 
 
-class Roundabout:
-    def __init__(self, nodes:list, edges:list):
-        self.nodes = nodes
-        self.edges = edges
+class Junction(Component):
+
+    requests = []
+
+    def get_schema(self):
+        schema = {
+            'id': str,
+            'type': JunctionType,
+            'x': float,
+            'y': float,
+            'incLanes': list,  # TODO
+            'intLanes': list,  # TODO
+            'shape': list,
+        }
+        return schema
+
+
+class Connection(Component):
+
+    def get_schema(self):
+        schema = {
+            'from': str,  # TODO
+            'to': str  # TODO
+            'fromLane': int,
+            'toLane': int,
+            'via': str,
+            'dir': ConnectionDirType,
+            'state': StateType,
+        }
+        return schema
+
+
+class Roundabout(Component):
+
+    def get_schema(self):
+        schema = {
+            'nodes': list,  # TODO
+            'edges': list,  # TODO
+        }
+        return schema

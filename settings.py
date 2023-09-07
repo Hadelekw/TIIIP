@@ -6,7 +6,7 @@ BASE_ROAD_FILE_PATH = 'road_file.net.xml'
 
 # Directory for storage of road files generated during the process.
 GENERATIONS_ROAD_FILE_DIRECTORY = 'generations/'
-
+CREATE_NEW_DIRECTORY_FOR_EACH_RUN = True
 
 # Base modes of transport weights (valuability).
 # If a mode of transport isn't on this list, it is not supported.
