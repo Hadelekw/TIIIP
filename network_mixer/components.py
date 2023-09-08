@@ -1,5 +1,7 @@
 """
  File containing classes based on SUMO's .NET.XML files' tags.
+ All necessary documentation is included in the official docs of SUMO:
+ https://sumo.dlr.de/docs/Networks/SUMO_Road_Networks.html#internal_junctions
 """
 
 from enum import Enum
@@ -14,6 +16,39 @@ class SpreadType(Enum):
     RIGHT = 'right'
     CENTER = 'center'
     ROAD_CENTER = 'roadCenter'
+
+
+class ConnectionDirType(Enum):
+    STRAIGHT = 's'
+    TURN = 't'
+    LEFT = 'l'
+    RIGHT = 'r'
+    PARTIALLY_LEFT = 'L'
+    PARTIALLY_RIGHT = 'R'
+    INVALID = 'invalid'
+
+
+class ConnectionStateType(Enum):
+    DEAD_END = '-'
+    EQUAL = '='
+    MINOR_LINK = 'm'
+    MAJOR_LINK = 'M'
+
+    # For traffic lights only:
+    CONTROLLER_OFF = 'O'
+    YELLOW_FLASHING = 'o'
+    YELLOW_MINOR_LINK = 'y'
+    YELLOW_MAJOR_LINK = 'Y'
+    RED = 'r'
+    GREEN_MINOR = 'g'
+    GREEN_MAJOR = 'G'
+
+
+class JunctionType(Enum):
+    DEAD_END = 'dead_end'
+    PRIORITY = 'priority'
+    RIGHT_BEFORE_LEFT = 'right_before_left'
+    INTERNAL = 'internal'
 
 
 class Component:
@@ -78,7 +113,7 @@ class Type(Component):
 
 class Edge(Component):
     """
-     Edge taken from official SUMO docs: https://sumo.dlr.de/docs/Networks/PlainXML.html#edge_descriptions.
+     Edge taken from the official SUMO docs: https://sumo.dlr.de/docs/Networks/PlainXML.html#edge_descriptions.
      This class is used for quick analysis of edges, finding outside connections,
      applying mutations and generally manipulating possible edges.
     """
@@ -113,7 +148,7 @@ class Edge(Component):
 
 class Lane(Component):
     """
-     Lane taken from official SUMO docs: https://sumo.dlr.de/docs/Networks/PlainXML.html#lane-specific_definitions.
+     Lane taken from the official SUMO docs: https://sumo.dlr.de/docs/Networks/PlainXML.html#lane-specific_definitions.
      This class is used for quick analysis of lane.
     """
 
@@ -137,6 +172,9 @@ class Lane(Component):
 
 
 class Junction(Component):
+    """
+     Junctions taken from the official SUMO docs: https://sumo.dlr.de/docs/Networks/SUMO_Road_Networks.html#junctions_and_right-of-way
+    """
 
     requests = []
 
@@ -146,6 +184,7 @@ class Junction(Component):
             'type': JunctionType,
             'x': float,
             'y': float,
+            'z': float,
             'incLanes': list,  # TODO
             'intLanes': list,  # TODO
             'shape': list,
@@ -153,17 +192,34 @@ class Junction(Component):
         return schema
 
 
-class Connection(Component):
+class Request(Component):
 
     def get_schema(self):
         schema = {
-            'from': str,  # TODO
-            'to': str  # TODO
+            'index': int,
+            'response': str,
+            'foes': str,
+            'cont': bool,
+        }
+        return schema
+
+
+class Connection(Component):
+    """
+     Connection taken from the official SUMO docs: https://sumo.dlr.de/docs/Networks/SUMO_Road_Networks.html#connections
+    """
+
+    def get_schema(self):
+        schema = {
+            'from': str,
+            'to': str,
             'fromLane': int,
             'toLane': int,
             'via': str,
+            'tl': str,  # TEMP -- TRAFFIC LIGHTS
+            'linkIndex': int,
             'dir': ConnectionDirType,
-            'state': StateType,
+            'state': ConnectionStateType,
         }
         return schema
 
