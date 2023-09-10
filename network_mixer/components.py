@@ -83,6 +83,13 @@ class Component:
             except KeyError:
                 pass
 
+    def get_file_string(self):
+        file_string = ''
+
+        # TODO
+        
+        return file_string
+
     def get_vehicle_classes(self, allow_string:str):
         result = []
         allow_list = allow_string.split()

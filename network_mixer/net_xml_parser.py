@@ -43,6 +43,12 @@ def load_base_file():
         #             change_dict_key_name(lane_dict, names_to_change[key], key)
         #         lanes[lane_dict['id']] = Lane(**lane_dict)
     print(components)
+    rebuild_file(components, 'test.xml')
 
-def load_file():
-    pass
+
+def rebuild_file(components:dict, file_path:str):
+    with open(file_path, 'w+') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        for key, value in components.items():
+            for component in value:
+                f.write('    <{} {}'.format(key, component.get_file_string()))
