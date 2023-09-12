@@ -9,6 +9,15 @@ from enum import Enum
 import TIIIP.simulation.vehicle_classes
 
 
+class Environment:
+    """
+     Class containing all the information about .NET.XML file's details about simulation environment.
+    """
+    xml_data = {}
+    net_data = {}
+    location = {}
+
+
 class SpreadType(Enum):
     """
      SpreadType taken from official SUMO docs: https://sumo.dlr.de/docs/Networks/PlainXML.html#spreadtype.
