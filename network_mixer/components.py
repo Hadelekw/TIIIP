@@ -17,6 +17,19 @@ class Environment:
     net_data = {}
     location = {}
 
+    def load_xml_data(self, xml_string:str):
+        xml_string = xml_string.split('\"')
+        self.xml_data = {
+            'version': xml_string[1],
+            'encoding': xml_string[3]
+        }
+
+    def load_net_data(self, net_dict:dict):
+        self.net_data = net_dict
+
+    def load_location_data(self, location_dict:dict):
+        self.location = location_dict
+
 
 class SpreadType(Enum):
     """
@@ -92,12 +105,23 @@ class Component:
             except KeyError:
                 pass
 
-    def get_file_string(self):
-        file_string = ''
+    def get_xml_line(self):
+        file_string = '<{} '.format(self.__class__.__name__.lower())
+        for key, value in self.__dict__.items():
+            formatted_value = value
 
-        # TODO
-        
-        return file_string
+            if type(value) is bool:
+                formatted_value = {True: '1', False: '0'}[value]
+
+            if type(value) is list:
+                value_list = value
+                if value_list:
+                    if type(value_list[0]) is type:
+                        value_list = [v.__name__.lower() for v in value]
+                formatted_value = ' '.join(value_list)
+
+            file_string += '{}=\"{}\" '.format(key, formatted_value)
+        return file_string + '>\n'
 
     def get_vehicle_classes(self, allow_string:str):
         result = []

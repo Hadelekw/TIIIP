@@ -21,34 +21,46 @@ def change_dict_key_name(d, init_name, end_name):
 
 
 def load_base_file():
-    f = open(BASE_ROAD_FILE_PATH)
+    f = open(BASE_ROAD_FILE_PATH, 'r')
     root = et.parse(f).getroot()
     f.close()
+
+    f = open(BASE_ROAD_FILE_PATH, 'r')
+    xml_data = f.readline()
+    f.close()
+
+    environment = Environment()
+    environment.load_xml_data(xml_data)
+    environment.load_net_data(root.attrib)
+
     components = {tag: {} for tag in ['type', 'edge', 'junction', 'connection', 'roundabout']}
+
     for child in root:
-        try:
-            # This doesn't include connections and roundabouts
-            components[child.tag][child.attrib['id']] = getattr(TIIIP.network_mixer, child.tag.title())(**child.attrib)
-        except:
-            pass
-        # for grandchild in child:
-        #     if grandchild.tag == 'lane':
-        #         lane_dict = grandchild.attrib
-        #         names_to_change = {
-        #             'change_left': 'changeLeft',
-        #             'change_right': 'changeRight',
-        #             'end_offset': 'endOffset',
-        #         }
-        #         for key in names_to_change:
-        #             change_dict_key_name(lane_dict, names_to_change[key], key)
-        #         lanes[lane_dict['id']] = Lane(**lane_dict)
-    print(components)
-    rebuild_file(components, 'test.xml')
+        if child.tag == 'location':
+            environment.load_location_data(child.attrib)
+            continue
+
+        if 'id' in child.attrib:
+            identifier = 'id'
+        elif 'index' in child.attrib:
+            identifier = 'index'
+        else:
+            identifier = None
+
+        if identifier:
+            components[child.tag][child.attrib[identifier]] = getattr(TIIIP.network_mixer, child.tag.title())(**child.attrib)
+        else:
+            components[child.tag][len(components[child.tag])] = getattr(TIIIP.network_mixer, child.tag.title())(**child.attrib)
+    rebuild_file(environment, components, 'test.xml')
+    print(environment.xml_data)
+    # return environment, components
 
 
-def rebuild_file(components:dict, file_path:str):
-    with open(file_path, 'w+') as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+def rebuild_file(environment:Environment, components:dict, save_file_path:str):
+    with open(save_file_path, 'w+') as f:
+        f.write('<?xml version="{}" encoding="{}"?>\n\n'.format(environment.xml_data['version'], environment.xml_data['encoding']))
+        f.write('<net ')
         for key, value in components.items():
-            for component in value:
-                f.write('    <{} {}'.format(key, component.get_file_string()))
+            print('{}\n{}\n\n'.format(key, value))
+            for _, component in value.items():
+                f.write(component.get_xml_line())
