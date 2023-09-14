@@ -13,13 +13,6 @@ from settings import BASE_ROAD_FILE_PATH
 from .components import *
 
 
-def change_dict_key_name(d, init_name, end_name):
-    try:
-        d[end_name] = d.pop(init_name)
-    except:
-        return None
-
-
 def load_base_file():
     f = open(BASE_ROAD_FILE_PATH, 'r')
     root = et.parse(f).getroot()
