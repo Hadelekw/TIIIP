@@ -11,7 +11,7 @@ CREATE_NEW_DIRECTORY_FOR_EACH_RUN = True
 # File describing the traffic flow for the base road file.
 # It uses .JSON format and if non-existent it can be generated
 # based on the BASE_ROAD_FILE during parsing.
-BASE_FLOW_FILE = 'flow_file.json'
+BASE_FLOW_FILE_PATH = 'flow_file.json'
 
 
 # Base modes of transport weights (valuability).

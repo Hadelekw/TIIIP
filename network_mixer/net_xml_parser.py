@@ -7,9 +7,11 @@
 import sys
 sys.path.append('../')
 
+from os.path import exists
 import xml.etree.ElementTree as et
+import json
 
-from settings import BASE_ROAD_FILE_PATH
+from settings import BASE_ROAD_FILE_PATH, BASE_FLOW_FILE_PATH
 from .components import *
 
 
@@ -56,6 +58,7 @@ def load_base_file():
                 components[child.tag][child.attrib['id']]._requests.append(Request(**grandchild.attrib))
 
     find_and_set_outside_connections(components)
+    generate_flow_file(components)
 
     return environment, components
 
@@ -74,6 +77,29 @@ def find_and_set_outside_connections(components:dict):
     for junction_id, list_of_edges in junctions.items():
         if len(list_of_edges) == 1:
             components['edge'][list_of_edges[0]]._outside_connection = True
+
+
+def generate_flow_file(components:dict):
+    """
+     Generates a semi-empty .JSON file with IDs of outside connection edges
+     which can be then used as 
+    """
+    def process():
+        result_json = {}
+        for edge_id, edge in components['edge'].items():
+            if edge._outside_connection:
+                result_json[edge_id] = 0
+        with open(BASE_FLOW_FILE_PATH, 'w+') as f:
+            json.dump(result_json, f, indent=4)
+
+    if not exists(BASE_FLOW_FILE_PATH):
+        process()
+    else:
+        overwrite = input('Do you want to want overwrite the existing BASE_FLOW_FILE? [Y/n]')
+        if overwrite.lower() == 'y' or not overwrite:
+            process()
+        else:
+            return False
 
 
 def build_file(environment:Environment, components:dict, save_file_path:str):
