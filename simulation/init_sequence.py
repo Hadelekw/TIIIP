@@ -17,9 +17,16 @@ def init():
     environment, components = load_base_file()
 
 
+def solve_flow_matrix(flow_data:dict):
+    """
+     Using the data in .JSON flow file this function calculates the
+     percentages of vehicles going from one outside connection to another
+    """
+    pass
+
 def generate_rou_xml(flow_file_path:str):
     """
      Generates a file describing many possible trips of vehicles based
-     on data described in .FLOW file (more on that in settings file)
+     on data described in .JSON flow file.
     """
     pass

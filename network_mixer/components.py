@@ -242,6 +242,7 @@ class Edge(Component):
         super().__init__(**kwargs)
         self._lanes = []
         self._outside_connection = False
+        self._outside_junction_id = None  # should be not null if outside connection
 
     def get_level(self):
         return 1
@@ -252,7 +253,7 @@ class Edge(Component):
             'from': str,  # TODO
             'to': str,  # TODO
             'type': self.get_type_class,
-            'function': str,  # TODO?
+            'function': str,
             'numLanes': int,
             'speed': float,
             'priority': int,

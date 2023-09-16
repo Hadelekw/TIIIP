@@ -77,13 +77,22 @@ def find_and_set_outside_connections(components:dict):
     for junction_id, list_of_edges in junctions.items():
         if len(list_of_edges) == 1:
             components['edge'][list_of_edges[0]]._outside_connection = True
+            components['edge'][list_of_edges[0]]._outside_junction_id = junction_id
 
 
 def generate_flow_file(components:dict):
     """
      Generates a semi-empty .JSON file with IDs of outside connection edges
-     which can be then used as 
+     which can be then used as a template for traffic flow data.
+
+     It contains two inner functions - one which lists other outside connections
+     which can be reached from the initial edge; and the one which processes the
+     entire data and saves into the file.
     """
+    def get_available_outside_connections():
+        # TODO: recursive function for finding all possible routes from one end of the map to another
+        pass
+
     def process():
         result_json = {}
         for edge_id, edge in components['edge'].items():
