@@ -77,7 +77,11 @@ def find_and_set_outside_connections(components:dict):
     for junction_id, list_of_edges in junctions.items():
         if len(list_of_edges) == 1:
             components['edge'][list_of_edges[0]]._outside_connection = True
-            components['edge'][list_of_edges[0]]._outside_junction_id = junction_id
+            # components['edge'][list_of_edges[0]]._outside_junction_id = junction_id
+            if junction_id == getattr(components['edge'][list_of_edges[0]], 'from'):
+                components['edge'][list_of_edges[0]]._outside_connection_type = OutsideConnectionType('in')
+            else:
+                components['edge'][list_of_edges[0]]._outside_connection_type = OutsideConnectionType('out')
 
 
 def generate_flow_file(components:dict):
@@ -89,15 +93,33 @@ def generate_flow_file(components:dict):
      which can be reached from the initial edge; and the one which processes the
      entire data and saves into the file.
     """
-    def get_available_outside_connections():
-        # TODO: recursive function for finding all possible routes from one end of the map to another
-        pass
+    def get_available_outside_connections(edge:Edge, visited_edges=[]):
+        # Recursive function for finding all possible routes from one end of the map to another
+        result = []
+        outer_edges = []
+        print(edge.id)
+        print(getattr(edge, 'from'))
+        print(getattr(edge, 'to'))
+        for _edge in components['edge'].values():
+            if hasattr(_edge, 'from'):
+                if getattr(_edge, 'from') == getattr(edge, 'to') and _edge not in visited_edges:
+                    outer_edges.append(_edge)
+        # outer_edges = list(filter(None, [_edge if getattr(_edge, 'from') == edge.to else None for _edge in components['edge'].values()]))
+        visited_edges.append(edge)
+        if not len(outer_edges):
+            return [edge.id]
+        for outer_edge in outer_edges:
+            result.extend(get_available_outside_connections(outer_edge, visited_edges))
+        return result
 
     def process():
         result_json = {}
         for edge_id, edge in components['edge'].items():
             if edge._outside_connection:
-                result_json[edge_id] = 0
+                result_json[edge_id] = {
+                    'flow': 0,
+                    'available_outside_connections': get_available_outside_connections(edge),
+                }
         with open(BASE_FLOW_FILE_PATH, 'w+') as f:
             json.dump(result_json, f, indent=4)
 

@@ -81,7 +81,6 @@ class ConnectionStateType(Enum):
     EQUAL = '='
     MINOR_LINK = 'm'
     MAJOR_LINK = 'M'
-
     # For traffic lights only:
     CONTROLLER_OFF = 'O'
     YELLOW_FLASHING = 'o'
@@ -97,6 +96,11 @@ class JunctionType(Enum):
     PRIORITY = 'priority'
     RIGHT_BEFORE_LEFT = 'right_before_left'
     INTERNAL = 'internal'
+
+
+class OutsideConnectionType(Enum):
+    IN = 'in'
+    OUT = 'out'
 
 
 class Component:
@@ -242,7 +246,7 @@ class Edge(Component):
         super().__init__(**kwargs)
         self._lanes = []
         self._outside_connection = False
-        self._outside_junction_id = None  # should be not null if outside connection
+        self._outside_connection_type = None
 
     def get_level(self):
         return 1
