@@ -75,7 +75,6 @@ def generate_flow_file(components:dict):
     def get_available_vehicle_types(edge:Edge):
         result = {}
         if hasattr(edge.type, 'allow'):
-            print(edge.type.allow)
             for vehicle in edge.type.allow:
                 result[vehicle.__name__.lower()] = ''
         return result
