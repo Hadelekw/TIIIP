@@ -11,8 +11,9 @@ from os.path import exists
 import xml.etree.ElementTree as et
 import json
 
-from settings import BASE_ROAD_FILE_PATH, BASE_FLOW_FILE_PATH
+from settings import BASE_ROAD_FILE_PATH, BASE_FLOW_FILE_PATH, PROMPT_FLOW_FILE_CREATION
 from .components import *
+from .components_functions import *
 
 
 def load_base_file():
@@ -57,31 +58,11 @@ def load_base_file():
             if grandchild.tag == 'request':
                 components[child.tag][child.attrib['id']]._requests.append(Request(**grandchild.attrib))
 
+    connect_edges_and_junctions(components)
     find_and_set_outside_connections(components)
     generate_flow_file(components)
 
     return environment, components
-
-
-def find_and_set_outside_connections(components:dict):
-    """
-     An outside connection is such an edge that has unique to or from value.
-     By default every edge has the _outside_connection value set to False.
-    """
-    junctions = {junction.id: [] for junction in components['junction'].values()}
-    for edge_id, edge in components['edge'].items():
-        if hasattr(edge, 'from'):
-            junctions[getattr(edge, 'from')].append(edge_id)
-        if hasattr(edge, 'to'):
-            junctions[getattr(edge, 'to')].append(edge_id)
-    for junction_id, list_of_edges in junctions.items():
-        if len(list_of_edges) == 1:
-            components['edge'][list_of_edges[0]]._outside_connection = True
-            # components['edge'][list_of_edges[0]]._outside_junction_id = junction_id
-            if junction_id == getattr(components['edge'][list_of_edges[0]], 'from'):
-                components['edge'][list_of_edges[0]]._outside_connection_type = OutsideConnectionType('in')
-            else:
-                components['edge'][list_of_edges[0]]._outside_connection_type = OutsideConnectionType('out')
 
 
 def generate_flow_file(components:dict):
@@ -93,23 +74,47 @@ def generate_flow_file(components:dict):
      which can be reached from the initial edge; and the one which processes the
      entire data and saves into the file.
     """
+    # def get_available_outside_connections(edge:Edge, visited_edges=[]):
+    #     # Recursive function for finding all possible routes from one end of the map to another
+    #     result = []
+    #     outer_edges = []
+    #     print(edge.id)
+    #     print(getattr(edge, 'from'))
+    #     print(getattr(edge, 'to'))
+    #     for _edge in components['edge'].values():
+    #         if hasattr(_edge, 'from'):
+    #             if edge.type.oneway:
+    #                 if getattr(_edge, 'from') == getattr(edge, 'to') and _edge not in visited_edges:
+    #                     outer_edges.append(_edge)
+    #             # if getattr(_edge, 'from') == getattr(edge, 'from') and _edge not in visited_edges:
+    #             #     outer_edges.append(_edge)
+    #             # elif getattr(_edge, 'to') == getattr(edge, 'to') and _edge not in visited_edges:
+    #             #     outer_edges.append(_edge)
+    #             # elif getattr(_edge, 'to') == getattr(edge, 'from') and _edge not in visited_edges:
+    #             #     outer_edges.append(_edge)
+    #     # outer_edges = list(filter(None, [_edge if getattr(_edge, 'from') == edge.to else None for _edge in components['edge'].values()]))
+    #     visited_edges.append(edge)
+    #     if not len(outer_edges):
+    #         return [edge.id]
+    #     for outer_edge in outer_edges:
+    #         result.extend(get_available_outside_connections(outer_edge, visited_edges))
+    #     return result
+
     def get_available_outside_connections(edge:Edge, visited_edges=[]):
-        # Recursive function for finding all possible routes from one end of the map to another
         result = []
-        outer_edges = []
-        print(edge.id)
-        print(getattr(edge, 'from'))
-        print(getattr(edge, 'to'))
-        for _edge in components['edge'].values():
-            if hasattr(_edge, 'from'):
-                if getattr(_edge, 'from') == getattr(edge, 'to') and _edge not in visited_edges:
-                    outer_edges.append(_edge)
-        # outer_edges = list(filter(None, [_edge if getattr(_edge, 'from') == edge.to else None for _edge in components['edge'].values()]))
+        edges_to_check = edge._to._to
+        edges_to_check.extend(edge._to._from)
+        edges_to_check.extend(edge._from._to)
+        edges_to_check.extend(edge._from._from)
+        edges_to_check.remove(edge)
         visited_edges.append(edge)
-        if not len(outer_edges):
-            return [edge.id]
-        for outer_edge in outer_edges:
-            result.extend(get_available_outside_connections(outer_edge, visited_edges))
+        outside_connections = list(filter(None, [edge_to_check if edge_to_check._outside_connection else None for edge_to_check in edges_to_check]))
+        for edge_to_check in edges_to_check:
+            if outside_connections:
+                return list([outside_connection.id for outside_connection in outside_connections])
+            if edge_to_check not in visited_edges:
+                result.extend(get_available_outside_connections(edge_to_check, visited_edges))
+        result = list(filter(None, result))
         return result
 
     def process():
@@ -126,11 +131,12 @@ def generate_flow_file(components:dict):
     if not exists(BASE_FLOW_FILE_PATH):
         process()
     else:
-        overwrite = input('Do you want to want overwrite the existing BASE_FLOW_FILE? [Y/n]')
-        if overwrite.lower() == 'y' or not overwrite:
-            process()
-        else:
-            return False
+        if PROMPT_FLOW_FILE_CREATION:
+            overwrite = input('Do you want to want overwrite the existing BASE_FLOW_FILE? [Y/n]')
+            if overwrite.lower() == 'y' or not overwrite:
+                process()
+            else:
+                return False
 
 
 def build_file(environment:Environment, components:dict, save_file_path:str):

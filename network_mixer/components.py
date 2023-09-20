@@ -247,6 +247,8 @@ class Edge(Component):
         self._lanes = []
         self._outside_connection = False
         self._outside_connection_type = None
+        self._from = None
+        self._to = None
 
     def get_level(self):
         return 1
@@ -312,6 +314,8 @@ class Junction(Component):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._requests = []
+        self._from = []
+        self._to = []
 
     def get_level(self):
         return 1
