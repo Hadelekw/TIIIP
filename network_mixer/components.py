@@ -218,6 +218,12 @@ class Component:
 
 class Type(Component):
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not hasattr(self, 'allow'):
+            self.allow = []
+        self.allowed_vehicles_fix()
+
     def get_level(self):
         return 1
 
@@ -233,6 +239,19 @@ class Type(Component):
             'disallow': self.get_vehicle_classes,
         }
         return schema
+
+    def allowed_vehicles_fix(self):
+        all_vehicle_classes = []
+        for vehicle_class_name, vehicle_class in TIIIP.simulation.__dict__.items():
+            if type(vehicle_class) is type:
+                if issubclass(vehicle_class, Vehicle):
+                    if vehicle_class_name == 'Vehicle' or vehicle_class_name == 'Car':
+                        continue
+                    all_vehicle_classes.append(vehicle_class)
+        if hasattr(self, 'disallow') and self.allow == []:
+            for vehicle_class in all_vehicle_classes:
+                if vehicle_class not in self.disallow:
+                    self.allow.append(vehicle_class)
 
 
 class Edge(Component):

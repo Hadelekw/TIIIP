@@ -39,7 +39,7 @@ def find_and_set_outside_connections(components:dict):
             junction._from[0]._outside_connection_type = OutsideConnectionType('in')
         if len(junction._to) == 1 and len(junction._from) == 1:
             if junction._to[0]._to == junction._from[0]._from or \
-               junction._from[0]._from == '-' + junction._to[0]._to:
+               junction._from[0]._from == junction._to[0]._to:
                 junction._to[0]._outsice_connection = True
                 junction._to[0]._outside_connection_type = OutsideConnectionType('out')
                 junction._from[0]._outside_connection = True

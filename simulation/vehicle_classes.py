@@ -13,5 +13,11 @@ class Bicycle(Vehicle):
 class Car(Vehicle):
     pass
 
+class Passenger(Car):
+    pass
+
+class Private(Passenger):
+    pass
+
 class Bus(Car):
     pass
