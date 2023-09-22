@@ -46,3 +46,33 @@ def find_and_set_outside_connections(components:dict):
                 junction._to[0]._outside_connection_type = OutsideConnectionType('out')
                 junction._from[0]._outside_connection = True
                 junction._from[0]._outside_connection_type = OutsideConnectionType('in')
+
+
+def get_branching_edges(edge:Edge, _from=False, _to=True, search_depth=1):
+    result = []
+    i = 0; levels = {n:[] for n in range(search_depth)}
+    while i < search_depth:
+        if not i:
+            if _from:
+                levels[i].extend(edge._from._to)
+            if _to:
+                levels[i].extend(edge._to._from)
+        else:
+            for edge_ in levels[i - 1]:
+                if _from:
+                    levels[i].extend(edge_._from._to)
+                if _to:
+                    levels[i].extend(edge_._to._from)
+        for edge_ in levels[i]:
+            if edge_ not in result:
+                result.append(edge_)
+        i += 1
+    return result
+
+
+def find_if_path_between_edges_exists(start_edge:Edge, end_edge:Edge, search_depth=10):
+    available_path_edges = []
+    available_path_edges.extend(get_branching_edges(start_edge, _from=True, search_depth=search_depth))
+    if end_edge in available_path_edges:
+        return True
+    return False

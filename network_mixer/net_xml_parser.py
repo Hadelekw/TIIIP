@@ -70,23 +70,39 @@ def generate_flow_file(components:dict):
      Generates a semi-empty .JSON file with IDs of outside connection edges
      which can be then used as a template for traffic flow data.
     """
-    # def get_available_outside_connections()  -- temporarily removed because it didn't quite work
+    def get_available_outside_connections(edge:Edge, vehicle_class):
+        result = []
+        candidate_edges = []
+        for edge_ in components['edge'].values():
+            if edge_._outside_connection and edge_._outside_connection_type == OutsideConnectionType('out'):
+                if vehicle_class in edge_.type.allow:
+                    candidate_edges.append(edge_)
+        for candidate_edge in candidate_edges:
+            if find_if_path_between_edges_exists(edge, candidate_edge):
+                result.append(candidate_edge.id)
+        return result
 
     def get_available_vehicle_types(edge:Edge):
         result = {}
         if hasattr(edge.type, 'allow'):
             for vehicle in edge.type.allow:
-                result[vehicle.__name__.lower()] = ''
+                result[vehicle.__name__.lower()] = get_available_outside_connections(edge, vehicle)
         return result
 
     def process():
         result_json = {}
         for edge_id, edge in components['edge'].items():
+            # Add some loading massage here
             if edge._outside_connection:
-                result_json[edge_id] = {
-                    'flow': 0,
-                    'available_outside_connections': get_available_vehicle_types(edge),
-                }
+                if edge._outside_connection_type == OutsideConnectionType('in'):
+                    result_json[edge_id] = {
+                        'flow': 0,
+                        'available_outside_connections': get_available_vehicle_types(edge),
+                    }
+                else:
+                    result_json[edge_id] = {
+                        'flow': 0,
+                    }
         with open(BASE_FLOW_FILE_PATH, 'w+') as f:
             json.dump(result_json, f, indent=4)
 
