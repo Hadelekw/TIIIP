@@ -59,7 +59,9 @@ def load_base_file():
                 components[child.tag][child.attrib['id']]._requests.append(Request(**grandchild.attrib))
 
     connect_edges_and_junctions(components)
+    print('Connecting edges and junctions... [DONE]')
     find_and_set_outside_connections(components)
+    print('Finding outside connections... [DONE]')
     generate_flow_file(components)
 
     return environment, components
@@ -82,29 +84,32 @@ def generate_flow_file(components:dict):
                 result.append(candidate_edge.id)
         return result
 
-    def get_available_vehicle_types(edge:Edge):
+    def get_available_vehicle_types(edge:Edge, function_to_apply):
         result = {}
         if hasattr(edge.type, 'allow'):
             for vehicle in edge.type.allow:
-                result[vehicle.__name__.lower()] = get_available_outside_connections(edge, vehicle)
+                result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
         return result
 
     def process():
         result_json = {}
+        n_processed = 0
         for edge_id, edge in components['edge'].items():
-            # Add some loading massage here
+            print('Processing components to flow file... [{:.2f}%]'.format(n_processed / len(components['edge']) * 100), end='\r')  # Loading message
             if edge._outside_connection:
                 if edge._outside_connection_type == OutsideConnectionType('in'):
                     result_json[edge_id] = {
-                        'flow': 0,
-                        'available_outside_connections': get_available_vehicle_types(edge),
+                        'flow': get_available_vehicle_types(edge, lambda e,v: 0),
+                        'available_outside_connections': get_available_vehicle_types(edge, get_available_outside_connections),
                     }
                 else:
                     result_json[edge_id] = {
-                        'flow': 0,
+                        'flow': get_available_vehicle_types(edge, lambda e,v: 0),
                     }
+            n_processed += 1
         with open(BASE_FLOW_FILE_PATH, 'w+') as f:
             json.dump(result_json, f, indent=4)
+        print('Processing components to flow file... [DONE]')
 
     if not exists(BASE_FLOW_FILE_PATH):
         process()
