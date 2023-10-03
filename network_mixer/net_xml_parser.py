@@ -59,9 +59,9 @@ def load_base_file():
                 components[child.tag][child.attrib['id']]._requests.append(Request(**grandchild.attrib))
 
     connect_edges_and_junctions(components)
-    print('Connecting edges and junctions... [DONE]')
+    print('Connecting edges and junctions... [DONE]  ')
     find_and_set_outside_connections(components)
-    print('Finding outside connections... [DONE]')
+    print('Finding outside connections... [DONE]  ')
     generate_flow_file(components)
 
     return environment, components
@@ -109,7 +109,7 @@ def generate_flow_file(components:dict):
             n_processed += 1
         with open(BASE_FLOW_FILE_PATH, 'w+') as f:
             json.dump(result_json, f, indent=4)
-        print('Processing components to flow file... [DONE]')
+        print('Processing components to flow file... [DONE]  ')
 
     if not exists(BASE_FLOW_FILE_PATH):
         process()
