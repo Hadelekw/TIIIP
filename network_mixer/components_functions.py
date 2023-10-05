@@ -82,3 +82,33 @@ def find_if_path_between_edges_exists(start_edge:Edge, end_edge:Edge, search_dep
     if end_edge in available_path_edges:
         return True
     return False
+
+
+def if_bfs(start_edge:Edge, end_edge:Edge, components, _to=True, _from=True, _direction_irrelevant=False, queue=[], visited=[]):
+    def validate_neighbor(neighbor):
+        if neighbor not in visited:
+            visited.append(neighbor)
+            queue.append(neighbor)
+
+    visited.append(start_edge)
+    queue.append(start_edge)
+
+    (print('\n\t{}'.format(start_edge.id)))
+    while queue:
+        edge_id = queue.pop(0).id
+        print(edge_id)
+        if edge_id == end_edge.id:
+            return True
+        if _to:
+            for neighbor in components['edge'][edge_id]._to._from:
+                validate_neighbor(neighbor)
+            if _direction_irrelevant:
+                for neighbor in components['edge'][edge_id]._to._to:
+                    validate_neighbor(neighbor)
+        if _from:
+            for neighbor in components['edge'][edge_id]._from._to:
+                validate_neighbor(neighbor)
+            if _direction_irrelevant:
+                for neighbor in components['edge'][edge_id]._from._from:
+                    validate_neighbor(neighbor)
+    return False

@@ -80,7 +80,8 @@ def generate_flow_file(components:dict):
                 if vehicle_class in edge_.type.allow:
                     candidate_edges.append(edge_)
         for candidate_edge in candidate_edges:
-            if find_if_path_between_edges_exists(edge, candidate_edge):
+            # if find_if_path_between_edges_exists(edge, candidate_edge):
+            if if_bfs(edge, candidate_edge, components, _direction_irrelevant=True):
                 result.append(candidate_edge.id)
         return result
 
