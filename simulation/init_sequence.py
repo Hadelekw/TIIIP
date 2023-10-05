@@ -28,6 +28,7 @@ def solve_flow_matrix(flow_data:dict):
      Using the data in .JSON flow file this function calculates the
      percentages of vehicles going from one outside connection to another
     """
+    result = {}
     out_edges = {}
     in_edges = {}
     for edge_id, data in flow_data.items():
@@ -35,10 +36,13 @@ def solve_flow_matrix(flow_data:dict):
             in_edges[edge_id] = data
         else:
             out_edges[edge_id] = data
+            result[edge_id] = {key:[] for key in data['flow']}
 
     for in_edge_id, in_edge_data in in_edges.items():
         for out_edge_id in in_edge_data['available_outside_connections']:
-            pass  # TODO
+            for vehicle_type, vehicle_flow in in_edge_data['flow'].items():
+                result[out_edge_id][in_edge_data['flow'][vehicle_type]].append(vehicle_flow)
+    print(result)
 
 
 def generate_rou_xml(flow_file_path:str):
