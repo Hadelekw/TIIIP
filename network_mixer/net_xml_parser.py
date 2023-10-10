@@ -86,9 +86,6 @@ def generate_flow_file(components:dict):
 
     def get_available_vehicle_types(edge:Edge, function_to_apply):
         result = {}
-        if edge.id == '-251549522':
-            print(edge.type.allow)
-            print(edge.type.disallow)
         if hasattr(edge.type, 'allow'):
             for vehicle in edge.type.allow:
                 result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
