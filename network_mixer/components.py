@@ -241,17 +241,17 @@ class Type(Component):
         return schema
 
     def allowed_vehicles_fix(self):
-        all_vehicle_classes = []
-        for vehicle_class_name, vehicle_class in TIIIP.simulation.__dict__.items():
-            if type(vehicle_class) is type:
-                if issubclass(vehicle_class, Vehicle):
-                    if vehicle_class_name == 'Vehicle' or vehicle_class_name == 'Car':
-                        continue
-                    all_vehicle_classes.append(vehicle_class)
+        all_vehicle_classes = TIIIP.simulation.all_vehicle_classes
+        # for vehicle_class_name, vehicle_class in TIIIP.simulation.__dict__.items():
+        #     if type(vehicle_class) is type:
+        #         if issubclass(vehicle_class, Vehicle):
+        #             if vehicle_class_name == 'Vehicle' or vehicle_class_name == 'Car':
+        #                 continue
+        #             all_vehicle_classes.append(vehicle_class)
         if hasattr(self, 'disallow') and self.allow == []:
-            for vehicle_class in all_vehicle_classes:
-                if vehicle_class not in self.disallow:
-                    self.allow.append(vehicle_class)
+            for vehicle_class_name in all_vehicle_classes:
+                if vehicle_class_name not in self.disallow:
+                    self.allow.append(TIIIP.simulation.__dict__[vehicle_class_name.capitalize()])
 
 
 class Edge(Component):

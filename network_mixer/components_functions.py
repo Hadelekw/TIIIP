@@ -90,13 +90,13 @@ def if_bfs(start_edge:Edge, end_edge:Edge, components, _to=True, _from=True, _di
             visited.append(neighbor)
             queue.append(neighbor)
 
+    visited = []
+    queue = []
     visited.append(start_edge)
     queue.append(start_edge)
 
-    (print('\n\t{}'.format(start_edge.id)))
     while queue:
         edge_id = queue.pop(0).id
-        print(edge_id)
         if edge_id == end_edge.id:
             return True
         if _to:

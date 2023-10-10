@@ -80,13 +80,15 @@ def generate_flow_file(components:dict):
                 if vehicle_class in edge_.type.allow:
                     candidate_edges.append(edge_)
         for candidate_edge in candidate_edges:
-            # if find_if_path_between_edges_exists(edge, candidate_edge):
             if if_bfs(edge, candidate_edge, components, _direction_irrelevant=True):
                 result.append(candidate_edge.id)
         return result
 
     def get_available_vehicle_types(edge:Edge, function_to_apply):
         result = {}
+        if edge.id == '-251549522':
+            print(edge.type.allow)
+            print(edge.type.disallow)
         if hasattr(edge.type, 'allow'):
             for vehicle in edge.type.allow:
                 result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)

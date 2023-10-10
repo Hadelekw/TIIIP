@@ -1,5 +1,14 @@
 
 
+all_vehicle_classes = {
+    'pedestrian',
+    'bicycle',
+    'passenger',
+    'private',
+    'bus'
+}
+
+
 class Vehicle:
     pass
 
