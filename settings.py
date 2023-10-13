@@ -14,6 +14,7 @@ CREATE_NEW_DIRECTORY_FOR_EACH_RUN = True
 BASE_FLOW_FILE_PATH = 'flow_file.json'
 # The file won't be generated if this is set to false
 PROMPT_FLOW_FILE_CREATION = True
+VALIDATE_FLOW_DATA = True
 
 
 # Base modes of transport weights (valuability).

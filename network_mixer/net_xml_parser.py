@@ -100,7 +100,7 @@ def generate_flow_file(components:dict):
                 if edge._outside_connection_type == OutsideConnectionType('in'):
                     result_json[edge_id] = {
                         'flow': get_available_vehicle_types(edge, lambda e,v: 0),
-                        'available_outside_connections': get_available_vehicle_types(edge, get_available_outside_connections),
+                        'outside_connections': get_available_vehicle_types(edge, get_available_outside_connections),
                     }
                 else:
                     result_json[edge_id] = {
