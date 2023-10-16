@@ -35,9 +35,9 @@ def validate_flow_data(flow_data:dict):
     in_flow_sum = 0; out_flow_sum = 0
     for data in flow_data.values():
         if 'outside_connections' in data:
-            in_flow_sum += data['flow']
+            in_flow_sum += sum([flow for flow in data['flow'].values()])
         else:
-            out_flow_sum += data['flow']
+            out_flow_sum += sum([flow for flow in data['flow'].values()])
     if in_flow_sum != out_flow_sum:
         raise Exception('Flow into the simulation is not equal to the flow out of the simulation.')
     return True
@@ -50,18 +50,20 @@ def solve_flow_matrix(flow_data:dict):
     """
     result = {}
     out_edges = {}
-    in_edges = {}
     for edge_id, data in flow_data.items():
         if 'outside_connections' in data:
-            in_edges[edge_id] = data
+            result[edge_id] = data['flow'].copy()
         else:
-            out_edges[edge_id] = data
-            result[edge_id] = {key:[] for key in data['flow']}
-
-    out_flow_sum = 0
+            out_edges[edge_id] = data['flow']
     for edge_id, data in flow_data.items():
-        if 'outside_connection' not in data:
-            out_flow_sum += data['flow']
+        if 'outside_connections' in data:
+            for vehicle_type in result[edge_id]:
+                result[edge_id][vehicle_type] = {}
+                for out_vehicle_type, out_edge_ids in data['outside_connections'].items():
+                    if vehicle_type == out_vehicle_type:
+                        for out_edge_id in out_edge_ids:
+                            result[edge_id][vehicle_type][out_edge_id] = data['flow'][vehicle_type] / out_edges[out_edge_id][vehicle_type]
+    return result
 
 
 def generate_rou_xml(flow_file_path:str):
