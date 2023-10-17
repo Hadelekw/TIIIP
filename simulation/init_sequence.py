@@ -9,7 +9,7 @@ sys.path.append('../')
 
 import json
 
-from TIIIP.network_mixer import load_base_file
+from TIIIP.network_mixer import load_base_file, Environment
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
 
 
@@ -23,6 +23,7 @@ def init():
     if VALIDATE_FLOW_DATA:
         validate_flow_data(flow_data)
     flow_data = solve_flow_matrix(flow_data)
+    generate_rou_xml(environment, components, flow_data, 'test_2.rou.xml')
 
 
 def validate_flow_data(flow_data:dict):
@@ -66,9 +67,31 @@ def solve_flow_matrix(flow_data:dict):
     return result
 
 
-def generate_rou_xml(flow_file_path:str):
+def generate_rou_xml(environment:Environment, components:dict, flow_data:dict, save_file_path:str, end=7200):
     """
      Generates a file describing many possible trips of vehicles based
      on data described in .JSON flow file.
     """
-    pass
+    with open(save_file_path, 'w+') as f:
+        f.write('<?xml {}?>\n\n'.format(environment.get_xml_xml_line_attribs()))
+        f.write('<routes xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://sumo.dlr.de/xsd/routes_file.xsd\">\n')
+        for in_edge_id, in_edge_data in flow_data.items():
+            for vehicle_type, out_edge_data in in_edge_data.items():
+                for out_edge_id, flow in out_edge_data.items():
+                    f.write('    <flow id=\"{}\" begin=\"0.0\" color=\"yellow\" fromJunction=\"{}\" toJunction=\"{}\" end=\"{}\" vehsPerHour=\"{}\"/>\n'.format('{}_{}'.format(in_edge_id, out_edge_id), components['edge'][in_edge_id]._from.id, components['edge'][out_edge_id]._to.id, end, flow))
+        f.write('</routes>')
+
+
+def build_file(environment:Environment, components:dict, save_file_path:str):
+    """
+     Constructs .NET.XML file based on the provided environment and components.
+    """
+    with open(save_file_path, 'w+') as f:
+        f.write('<?xml {}?>\n\n'.format(environment.get_xml_xml_line_attribs()))
+        f.write('<net {}>\n\n'.format(environment.get_net_xml_line_attribs()))
+        f.write('    <location {}/>\n\n'.format(environment.get_location_xml_line_attribs()))
+        for key, value in components.items():
+            for _, component in value.items():
+                f.write(component.get_xml_line())
+            f.write('\n')
+        f.write('\n</net>')

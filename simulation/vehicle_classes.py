@@ -1,8 +1,8 @@
 
 
 all_vehicle_classes = {
-    'pedestrian',
-    'bicycle',
+    # 'pedestrian',
+    # 'bicycle',
     'passenger',
     'private',
     'bus'
