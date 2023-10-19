@@ -6,6 +6,7 @@ from TIIIP import network_mixer
 class Flow:
     def __init__(self, id:str, type:str, begin:int, color:str, fromJunction:network_mixer.components.Junction, toJunction:network_mixer.components.Junction, end:int, vehsPerHour:float):
         self.id = id
+        self.type = type
         self.begin = begin
         self.color = color
         self.fromJunction = fromJunction
@@ -16,7 +17,7 @@ class Flow:
     def get_xml_line(self):
         file_string = '    <flow'
         for key, value in self.__dict__.items():
-            if not value:
+            if value is None:
                 continue
             if isinstance(value, network_mixer.components.Junction):
                 file_string += ' {}=\"{}\"'.format(key, value.id)
