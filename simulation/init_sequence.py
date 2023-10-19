@@ -10,6 +10,7 @@ sys.path.append('../')
 import json
 
 from TIIIP.network_mixer import load_base_file, Environment
+from .routes_flows import Flow
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
 
 
@@ -22,7 +23,7 @@ def init():
     flow_data = json.load(flow_file); flow_file.close()
     if VALIDATE_FLOW_DATA:
         validate_flow_data(flow_data)
-    flow_data = solve_flow_matrix(flow_data)
+    flow_data = solve_flow_matrix(flow_data, components)
     generate_rou_xml(environment, components, flow_data, 'test_2.rou.xml')
 
 
@@ -44,30 +45,32 @@ def validate_flow_data(flow_data:dict):
     return True
 
 
-def solve_flow_matrix(flow_data:dict):
-    """
-     Using the data in .JSON flow file this function calculates the
-     percentages of vehicles going from one outside connection to another
-    """
+def solve_flow_matrix(flow_data:dict, components:dict):
     result = {}
-    out_edges = {}
+    in_edges = {}; out_edges = {}
     for edge_id, data in flow_data.items():
         if 'outside_connections' in data:
-            result[edge_id] = data['flow'].copy()
+            in_edges[edge_id] = data
         else:
-            out_edges[edge_id] = data['flow']
-    for edge_id, data in flow_data.items():
-        if 'outside_connections' in data:
-            for vehicle_type in result[edge_id]:
-                result[edge_id][vehicle_type] = {}
-                for out_vehicle_type, out_edge_ids in data['outside_connections'].items():
-                    if vehicle_type == out_vehicle_type:
-                        for out_edge_id in out_edge_ids:
-                            result[edge_id][vehicle_type][out_edge_id] = data['flow'][vehicle_type] / out_edges[out_edge_id][vehicle_type]
+            out_edges[edge_id] = data
+    for in_edge_id, in_data in in_edges.items():
+        for out_edge_id, out_data in out_edges.items():
+            for vehicle_type in in_data['outside_connections']:
+                if out_edge_id in in_data['outside_connections'][vehicle_type]:
+                    result['{}_{}'.format(in_edge_id, out_edge_id)] = Flow(
+                        id='{}_{}'.format(in_edge_id, out_edge_id),
+                        type='',
+                        begin=0,
+                        color='yellow',
+                        fromJunction=components['edge'][in_edge_id]._from,
+                        toJunction=components['edge'][out_edge_id]._to,
+                        end=7200,
+                        vehsPerHour=in_data['flow'][vehicle_type] / out_data['flow'][vehicle_type]
+                    )
     return result
 
 
-def generate_rou_xml(environment:Environment, components:dict, flow_data:dict, save_file_path:str, end=7200):
+def generate_rou_xml(environment:Environment, components:dict, solved_flow_data:dict, save_file_path:str, end=7200):
     """
      Generates a file describing many possible trips of vehicles based
      on data described in .JSON flow file.
@@ -75,23 +78,6 @@ def generate_rou_xml(environment:Environment, components:dict, flow_data:dict, s
     with open(save_file_path, 'w+') as f:
         f.write('<?xml {}?>\n\n'.format(environment.get_xml_xml_line_attribs()))
         f.write('<routes xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://sumo.dlr.de/xsd/routes_file.xsd\">\n')
-        for in_edge_id, in_edge_data in flow_data.items():
-            for vehicle_type, out_edge_data in in_edge_data.items():
-                for out_edge_id, flow in out_edge_data.items():
-                    f.write('    <flow id=\"{}\" begin=\"0.0\" color=\"yellow\" fromJunction=\"{}\" toJunction=\"{}\" end=\"{}\" vehsPerHour=\"{}\"/>\n'.format('{}_{}'.format(in_edge_id, out_edge_id), components['edge'][in_edge_id]._from.id, components['edge'][out_edge_id]._to.id, end, flow))
+        for flow in solved_flow_data.values():
+            f.write(flow.get_xml_line())
         f.write('</routes>')
-
-
-def build_file(environment:Environment, components:dict, save_file_path:str):
-    """
-     Constructs .NET.XML file based on the provided environment and components.
-    """
-    with open(save_file_path, 'w+') as f:
-        f.write('<?xml {}?>\n\n'.format(environment.get_xml_xml_line_attribs()))
-        f.write('<net {}>\n\n'.format(environment.get_net_xml_line_attribs()))
-        f.write('    <location {}/>\n\n'.format(environment.get_location_xml_line_attribs()))
-        for key, value in components.items():
-            for _, component in value.items():
-                f.write(component.get_xml_line())
-            f.write('\n')
-        f.write('\n</net>')
