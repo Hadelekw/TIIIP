@@ -123,16 +123,16 @@ DEFAULT_FIELDS = {
     'speedFactor': 1,
     'speedDev': 0.1,
     'color': 'yellow',
-    'vClass': 'passenger',  # enum
-    'emissionClass': 'PC_G_EU4',  # enum
-    'guiShape': 'unknown',  # enum
+    'vClass': VehicleClass('passenger'),
+    'emissionClass': EmissionClass('PC_G_EU4'),
+    'guiShape': GuiShape('unknown'),
     'width': 1.8,
     'height': 1.5,
     'collisionMinGapFactor': 1,
     'imgFile': None,
     'osgFile': None,
-    'laneChangeModel': 'LC2013',  # enum
-    'carFollowModel': 'Krauss',  # enum
+    'laneChangeModel': LaneChangeModel('LC2013'),
+    'carFollowModel': CarFollowModel('Krauss'),
     'personCapacity': 4,
     'containerCapacity': 0,
     'boardingDuration': 0.5,
