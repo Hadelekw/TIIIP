@@ -151,9 +151,7 @@ class Vehicle:
     default_attribs = DEFAULT_FIELDS
 
     def __init__(self, **kwargs):
-        if not kwargs:
-            self.set_default_attribs()
-            return
+        self.set_default_attribs()
         if self.validate(kwargs):
             for key, value in kwargs.items():
                 setattr(self, key, value)
@@ -171,21 +169,26 @@ class Vehicle:
     def get_xml_line(self):
         file_string = '    <vType'
         for key, value in self.__dict__.items():
-            if value == self.default_attribs[key]:
+            if isinstance(value, Enum):
+                file_string += ' {}=\"{}\"'.format(key, value.value)
                 continue
-            else:
-                file_string += ' {}=\"{}\"'.format(key, value)
+            file_string += ' {}=\"{}\"'.format(key, value)
         file_string += '/>\n'
         return file_string
 
 
 class Pedestrian(Vehicle):
-    def set_default_attribs(self):
-        pass
+    default_attribs = {
+        'id': 'pedestrian',
+        'vClass': VehicleClass('pedestrian'),
+    }
 
 
 class Bicycle(Vehicle):
-    pass
+    default_attribs = {
+        'id': 'bicycle',
+        'vClass': VehicleClass('bicycle'),
+    }
 
 
 class Car(Vehicle):
@@ -193,15 +196,24 @@ class Car(Vehicle):
 
 
 class Passenger(Car):
-    pass
+    default_attribs = {
+        'id': 'passenger',
+        'vClass': VehicleClass('passenger'),
+    }
 
 
 class Private(Passenger):
-    pass
+    default_attribs = {
+        'id': 'private',
+        'vClass': VehicleClass('private'),
+    }
 
 
 class Bus(Car):
-    pass
+    default_attribs = {
+        'id': 'bus',
+        'vClass': VehicleClass('bus'),
+    }
 
 
 vehicle_classes = {
