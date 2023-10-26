@@ -282,7 +282,7 @@ class Type(Component):
 
     def allowed_vehicles_fix(self):
         if hasattr(self, 'disallow') and self.allow == []:
-            for vehicle_class_name, vehicle_class in simulation.VEHICLE_CLASSES:
+            for vehicle_class_name, vehicle_class in simulation.VEHICLE_CLASSES.items():
                 if vehicle_class_name not in self.disallow:
                     self.allow.append(vehicle_class)
 
