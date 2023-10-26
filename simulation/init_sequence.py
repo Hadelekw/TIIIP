@@ -9,7 +9,6 @@ sys.path.append('../')
 
 import json
 
-# from network_mixer import load_base_file, Environment
 import network_mixer
 from .routes_flows import Flow
 from .vehicle_classes import vehicle_classes
@@ -34,8 +33,8 @@ def validate_flow_data(flow_data:dict):
     """
      Validates the values typed into the flow file. The sum of the flow into the simulation
      has to be equal to the amount of flow out the simulation. Technically it is possible
-     for them not to be equal but it'd result in percentages greater than 1, therefore
-     flow higher than anticipated. This can be turned off in the settings.
+     for them not to be equal but it'd result in percentages not summing properly. 
+     This can be turned off in the settings.
     """
     in_flow_sum = 0; out_flow_sum = 0
     for data in flow_data.values():
