@@ -33,7 +33,7 @@ def load_base_file():
     environment = Environment()
     environment.load_xml_data(xml_data)
     environment.load_net_data(net_data)
-    components = {tag: {} for tag in ['type', 'edge', 'junction', 'connection', 'roundabout']}
+    components = {tag: {} for tag in COMPONENTS}
 
     for child in root:
         if child.tag == 'location':
@@ -57,6 +57,8 @@ def load_base_file():
                 components[child.tag][child.attrib['id']]._lanes.append(Lane(**grandchild.attrib))
             if grandchild.tag == 'request':
                 components[child.tag][child.attrib['id']]._requests.append(Request(**grandchild.attrib))
+            if grandchild.tag == 'phase':
+                components[child.tag][child.attrib['id']]._phases.append(Phase(**grandchild.attrib))
 
     connect_edges_and_junctions(components)
     print('Connecting edges and junctions... [DONE]  ')

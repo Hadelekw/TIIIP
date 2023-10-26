@@ -98,6 +98,7 @@ class JunctionType(Enum):
     PRIORITY = 'priority'
     RIGHT_BEFORE_LEFT = 'right_before_left'
     INTERNAL = 'internal'
+    TRAFFIC_LIGHT = 'traffic_light'
 
 
 class OutsideConnectionType(Enum):
@@ -202,6 +203,7 @@ class Component:
 
             elif isinstance(value, list):
                 value_list = value
+                spaced = True
                 if not value:
                     continue
                 if value_list:
@@ -210,11 +212,17 @@ class Component:
                     elif isinstance(value_list[0], tuple):
                         if isinstance(value_list[0][0], float):
                             value_list = ['{},{}'.format(pair[0], pair[1]) for pair in value]
+                    elif isinstance(value_list[0], SignalState):
+                        value_list = [v.value for v in value_list]
+                        spaced = False
                     elif type(value_list[0]) is not type:
                         continue
                     elif issubclass(value_list[0], simulation.Vehicle):
                         value_list = [v.__name__.lower() for v in value]
-                formatted_value = ' '.join(value_list)
+                if spaced:
+                    formatted_value = ' '.join(value_list)
+                else:
+                    formatted_value = ''.join(value_list)
 
             file_string += '{}=\"{}\" '.format(key, formatted_value)
         return file_string + end_string
@@ -450,6 +458,7 @@ class TLLogic(Component):
             'programID': str,
             'offset': int,
         }
+        return schema
 
     def get_name(self):
         return 'tlLogic'
@@ -471,6 +480,7 @@ class Phase(Component):
             'maxDur': int,
             'name': str,
         }
+        return schema
 
     def get_signal_states(self, signal_states):
         result = []
@@ -487,6 +497,6 @@ COMPONENTS = {
     'request': Request,
     'connection': Connection,
     'roundabout': Roundabout,
-    'tllogic': TLLogic,
+    'tlLogic': TLLogic,
     'phase': Phase,
 }
