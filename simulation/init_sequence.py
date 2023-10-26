@@ -9,9 +9,9 @@ sys.path.append('../')
 
 import json
 
-import TIIIP
 from TIIIP.network_mixer import load_base_file, Environment
 from .routes_flows import Flow
+from .vehicle_classes import vehicle_classes
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
 
 
@@ -74,12 +74,8 @@ def solve_flow_matrix(flow_data:dict, components:dict, end=7200):
 
 def get_vehicle_types():
     result = {}
-    for key, value in TIIIP.simulation.__dict__.items():
-        if type(value) is type:
-            if issubclass(value, TIIIP.simulation.Vehicle):
-                if value is TIIIP.simulation.Vehicle or value is TIIIP.simulation.Car:
-                    continue
-                result[key] = value()
+    for key, value in vehicle_classes.items():
+        result[key] = value()
     return result
 
 
