@@ -4,10 +4,12 @@
  https://sumo.dlr.de/docs/Networks/SUMO_Road_Networks.html#internal_junctions
 """
 
+import sys
+sys.path.append('../')
+
 from enum import Enum
 
-import TIIIP
-from TIIIP.simulation import Vehicle
+import simulation
 
 
 class Environment:
@@ -103,6 +105,23 @@ class OutsideConnectionType(Enum):
     OUT = 'out'
 
 
+class TLLogicType(Enum):
+    STATIC = 'static'
+    ACTUATED = 'actuated'
+    DELAY_BASED = 'delay_based'
+
+
+class SignalState(Enum):
+    RED = 'r'
+    YELLOW = 'y'
+    GREEN_NO_PRIORITY = 'g'
+    GREEN_PRIORITY = 'G'
+    GREEN_RIGHT_TURN_ARROW = 's'
+    RED_YELLOW = 'u'
+    OFF_BLINKING = 'o'
+    OFF = 'O'
+
+
 class Component:
     """
      Base class for other component classes.
@@ -134,6 +153,12 @@ class Component:
             return self.get_level()
         return 0
 
+    @property
+    def name(self):
+        if hasattr(self, 'get_name'):
+            return self.get_name()
+        return self.__class__.__name__.lower()
+
     def clean(self):
         for key, value in self.__dict__.items():
             try:
@@ -144,7 +169,7 @@ class Component:
     # A function for building .NET.XML files from Components
     # Currently tested on just one case
     def get_xml_line(self):
-        file_string = '{}<{} '.format('    ' * self.level, self.__class__.__name__.lower())
+        file_string = '{}<{} '.format('    ' * self.level, self.name)
         end_string = '/>\n'
         for key, value in self.__dict__.items():        
             if key[0] == '_':
@@ -158,6 +183,11 @@ class Component:
                     for request in self._requests:
                         end_string += request.get_xml_line()
                     end_string += '{}</junction>\n'.format('    ' * self.level)
+                if key == '_phases' and value:
+                    end_string = '>\n'
+                    for phase in self._phases:
+                        end_string += phase.get_xml_line()
+                    end_string += '{}</tlLogic>\n'.format('    ' * self.level)
                 continue
             formatted_value = value
 
@@ -182,7 +212,7 @@ class Component:
                             value_list = ['{},{}'.format(pair[0], pair[1]) for pair in value]
                     elif type(value_list[0]) is not type:
                         continue
-                    elif issubclass(value_list[0], Vehicle):
+                    elif issubclass(value_list[0], simulation.Vehicle):
                         value_list = [v.__name__.lower() for v in value]
                 formatted_value = ' '.join(value_list)
 
@@ -208,8 +238,8 @@ class Component:
         result = []
         allow_list = allow_string.split()
         for vehicle_id in allow_list:
-            if hasattr(TIIIP.simulation, vehicle_id.title()):
-                result.append(getattr(TIIIP.simulation, vehicle_id.title()))
+            if hasattr(simulation, vehicle_id.title()):
+                result.append(getattr(simulation, vehicle_id.title()))
         return result
 
     def get_type_class(self, type_id:str):
@@ -241,11 +271,11 @@ class Type(Component):
         return schema
 
     def allowed_vehicles_fix(self):
-        vehicle_classes = TIIIP.simulation.vehicle_classes
+        vehicle_classes = simulation.vehicle_classes
         if hasattr(self, 'disallow') and self.allow == []:
             for vehicle_class_name in vehicle_classes:
                 if vehicle_class_name not in self.disallow:
-                    self.allow.append(TIIIP.simulation.__dict__[vehicle_class_name.capitalize()])
+                    self.allow.append(simulation.__dict__[vehicle_class_name.capitalize()])
 
 
 class Edge(Component):
@@ -386,6 +416,9 @@ class Connection(Component):
 
 
 class Roundabout(Component):
+    """
+     Roundabout taken from the offical SUMO docs: https://sumo.dlr.de/docs/Networks/SUMO_Road_Networks.html#roundabouts
+    """
 
     def get_level(self):
         return 1
@@ -396,3 +429,64 @@ class Roundabout(Component):
             'edges': self.get_id_list,
         }
         return schema
+
+
+class TLLogic(Component):
+    """
+     Traffic Lights Logic taken from the official SUMO docs: https://sumo.dlr.de/docs/Simulation/Traffic_Lights.html#tllogic_attributes
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._phases = []
+
+    def get_level(self):
+        return 1
+
+    def get_schema(self):
+        schema = {
+            'id': str,
+            'type': TLLogicType,
+            'programID': str,
+            'offset': int,
+        }
+
+    def get_name(self):
+        return 'tlLogic'
+
+
+class Phase(Component):
+    """
+     Phase for Traffic Lights taken from the offical SUMO docs: https://sumo.dlr.de/docs/Simulation/Traffic_Lights.html#phase_attributes
+    """
+
+    def get_level(self):
+        return 2
+
+    def get_schema(self):
+        schema = {
+            'duration': int,
+            'state': self.get_signal_states,
+            'minDur': int,
+            'maxDur': int,
+            'name': str,
+        }
+
+    def get_signal_states(self, signal_states):
+        result = []
+        for signal_state in signal_states:
+            result.append(SignalState(signal_state))
+        return result
+
+
+COMPONENTS = {
+    'type': Type,
+    'edge': Edge,
+    'lane': Lane,
+    'junction': Junction,
+    'request': Request,
+    'connection': Connection,
+    'roundabout': Roundabout,
+    'tllogic': TLLogic,
+    'phase': Phase,
+}

@@ -48,9 +48,9 @@ def load_base_file():
             identifier = None
 
         if identifier:
-            components[child.tag][child.attrib[identifier]] = getattr(TIIIP.network_mixer, child.tag.title())(**child.attrib)
+            components[child.tag][child.attrib[identifier]] = COMPONENTS[child.tag](**child.attrib)
         else:
-            components[child.tag][len(components[child.tag])] = getattr(TIIIP.network_mixer, child.tag.title())(**child.attrib)
+            components[child.tag][len(components[child.tag])] = COMPONENTS[child.tag](**child.attrib)
 
         for grandchild in child:
             if grandchild.tag == 'lane':

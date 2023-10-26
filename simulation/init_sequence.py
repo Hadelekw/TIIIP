@@ -9,7 +9,8 @@ sys.path.append('../')
 
 import json
 
-from TIIIP.network_mixer import load_base_file, Environment
+# from network_mixer import load_base_file, Environment
+import network_mixer
 from .routes_flows import Flow
 from .vehicle_classes import vehicle_classes
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
@@ -19,7 +20,7 @@ def init():
     """
      The main procedure.
     """
-    environment, components = load_base_file()
+    environment, components = network_mixer.load_base_file()
     flow_file = open(BASE_FLOW_FILE_PATH)
     flow_data = json.load(flow_file); flow_file.close()
     if VALIDATE_FLOW_DATA:
@@ -79,7 +80,7 @@ def get_vehicle_types():
     return result
 
 
-def generate_rou_xml(environment:Environment, components:dict, vehicle_types:dict, solved_flow_data:dict, save_file_path:str):
+def generate_rou_xml(environment, components:dict, vehicle_types:dict, solved_flow_data:dict, save_file_path:str):
     """
      Generates a file describing many possible trips of vehicles based
      on data described in .JSON flow file.
