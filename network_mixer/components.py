@@ -246,8 +246,10 @@ class Component:
         result = []
         allow_list = allow_string.split()
         for vehicle_id in allow_list:
-            if hasattr(simulation, vehicle_id.title()):
-                result.append(getattr(simulation, vehicle_id.title()))
+            # if hasattr(simulation, vehicle_id.title()):
+            #     result.append(getattr(simulation, vehicle_id.title()))
+            if vehicle_id in simulation.VEHICLE_CLASSES:
+                result.append(simulation.VEHICLE_CLASSES[vehicle_id])
         return result
 
     def get_type_class(self, type_id:str):
@@ -279,11 +281,10 @@ class Type(Component):
         return schema
 
     def allowed_vehicles_fix(self):
-        vehicle_classes = simulation.vehicle_classes
         if hasattr(self, 'disallow') and self.allow == []:
-            for vehicle_class_name in vehicle_classes:
+            for vehicle_class_name, vehicle_class in simulation.VEHICLE_CLASSES:
                 if vehicle_class_name not in self.disallow:
-                    self.allow.append(simulation.__dict__[vehicle_class_name.capitalize()])
+                    self.allow.append(vehicle_class)
 
 
 class Edge(Component):

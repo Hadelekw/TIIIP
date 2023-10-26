@@ -74,8 +74,11 @@ def solve_flow_matrix(flow_data:dict, components:dict, end=7200):
 
 
 def get_vehicle_types():
+    """
+     Creates Vehicle objects from classes defined in vehicle_classes.py
+    """
     result = {}
-    for key, value in vehicle_classes.items():
+    for key, value in VEHICLES.items():
         result[key] = value()
     return result
 
