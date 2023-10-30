@@ -56,6 +56,10 @@ def solve_flow_matrix(flow_data:dict, components:dict, end=7200):
         else:
             out_edges[edge_id] = data
     for in_edge_id, in_data in in_edges.items():
+        out_flow = {vehicle_type:0 for vehicle_type in in_data['flow']}
+        for vehicle_type, outside_connections in in_data['outside_connections'].items():
+            for outside_connection_id in outside_connections:
+                out_flow[vehicle_type] += out_edges[outside_connection_id]['flow'][vehicle_type]
         for out_edge_id, out_data in out_edges.items():
             for vehicle_type in in_data['outside_connections']:
                 if out_edge_id in in_data['outside_connections'][vehicle_type]:
@@ -67,7 +71,7 @@ def solve_flow_matrix(flow_data:dict, components:dict, end=7200):
                         fromJunction=components['edge'][in_edge_id]._from,
                         toJunction=components['edge'][out_edge_id]._to,
                         end=end,
-                        vehsPerHour=in_data['flow'][vehicle_type] / out_data['flow'][vehicle_type]
+                        vehsPerHour=round(out_data['flow'][vehicle_type] / out_flow[vehicle_type] * in_data['flow'][vehicle_type], 2)
                     )
     return result
 

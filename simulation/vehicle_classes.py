@@ -217,9 +217,9 @@ class Bus(Car):
 
 
 VEHICLE_CLASSES = {
-    'pedestrian': Pedestrian,
-    'bicycle': Bicycle,
+    # 'pedestrian': Pedestrian,
+    # 'bicycle': Bicycle,
     'passenger': Passenger,
-    'private': Private,
-    'bus': Bus,
+    # 'private': Private,
+    # 'bus': Bus,
 }
