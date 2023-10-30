@@ -11,7 +11,7 @@ import json
 
 import network_mixer
 from .routes_flows import Flow
-from .vehicle_classes import vehicle_classes
+from .vehicle_classes import VEHICLE_CLASSES
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
 
 
@@ -77,7 +77,7 @@ def get_vehicle_types():
      Creates Vehicle objects from classes defined in vehicle_classes.py
     """
     result = {}
-    for key, value in VEHICLES.items():
+    for key, value in VEHICLE_CLASSES.items():
         result[key] = value()
     return result
 
