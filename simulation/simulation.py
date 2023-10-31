@@ -13,16 +13,20 @@ import traci
 from settings import BASE_SUMO_CONFIG_FILE_PATH
 
 
+DATA_SCHEMA = {
+    'vehicles_per_step': []
+}
+
+
 def run():
     traci.start(['sumo', '-c', BASE_SUMO_CONFIG_FILE_PATH, '--junction-taz'])
 
-    vehicles_per_step = []
+    data = DATA_SCHEMA
 
     for step in range(1000):
-        vehicles_per_step.append(len(traci.vehicle.getIDList()))
+        data['vehicles_per_step'].append(len(traci.vehicle.getIDList()))
         traci.simulationStep()
-
-    print(vehicles_per_step)
     
     traci.close()
 
+    return data
