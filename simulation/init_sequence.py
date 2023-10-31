@@ -12,7 +12,7 @@ import json
 import network_mixer
 from .routes_flows import Flow
 from .vehicle_classes import VEHICLE_CLASSES
-from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA
+from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH, BASE_SUMO_CONFIG_FILE_PATH
 
 
 def init():
@@ -26,7 +26,8 @@ def init():
         validate_flow_data(flow_data)
     flow_data = solve_flow_matrix(flow_data, components)
     vehicle_types = get_vehicle_types()
-    generate_rou_xml(environment, components, vehicle_types, flow_data, 'test_2.rou.xml')
+    generate_rou_xml(environment, components, vehicle_types, flow_data, BASE_ROUTES_FILE_PATH)
+    generate_sumo_config(BASE_SUMO_CONFIG_FILE_PATH, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH)
 
 
 def validate_flow_data(flow_data:dict):
@@ -99,3 +100,14 @@ def generate_rou_xml(environment, components:dict, vehicle_types:dict, solved_fl
         for flow in solved_flow_data.values():
             f.write(flow.get_xml_line())
         f.write('</routes>')
+
+
+def generate_sumo_config(save_file_path:str, road_file_path:str, routes_file_path:str):
+    """
+     Writes a file collecting the road file and routes file.
+    """
+    with open(save_file_path, 'w+') as f:
+        f.write('<configuration>\n')
+        f.write('    <n v=\"{}\"/>\n'.format(road_file_path))
+        f.write('    <r v=\"{}\"/>\n'.format(routes_file_path))
+        f.write('</configuration>')

@@ -7,3 +7,5 @@
 test.*
 test*.*
 road_file*.net.xml
+routes_file*.rou.xml
+sumo_config.sumocfg

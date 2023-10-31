@@ -16,6 +16,13 @@ BASE_FLOW_FILE_PATH = 'flow_file.json'
 PROMPT_FLOW_FILE_CREATION = True
 VALIDATE_FLOW_DATA = False
 
+# File describing routes and flows of traffic.
+# Must be in SUMO's .ROU.XML format.
+BASE_ROUTES_FILE_PATH = 'routes_file.rou.xml'
+
+# File collecting the road file and routes file for TraCI.
+BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
+
 
 # Base modes of transport weights (valuability).
 # If a mode of transport isn't on this list, it is not supported.
