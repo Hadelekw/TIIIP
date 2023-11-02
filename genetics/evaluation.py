@@ -9,4 +9,7 @@ from simulation import DATA_SCHEMA
 
 
 def evaluate(data):
-    pass
+    result = {}
+    if 'vehicles_per_step' in DATA_SCHEMA:
+        result['total_vehicles'] = sum(data['vehicles_per_step'])
+    return result
