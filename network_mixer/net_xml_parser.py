@@ -16,15 +16,15 @@ from .components import *
 from .components_functions import *
 
 
-def load_base_file():
+def load_file(file_path):
     """
-     Analysis of the base road file in .NET.XML format. It returns provided environment
+     Analysis of a road file in .NET.XML format. It returns provided environment
      (xml data, net data, location data) and components (everything else which is mutable).
     """
-    f = open(BASE_ROAD_FILE_PATH, 'r')
+    f = open(file_path, 'r')
     root = et.parse(f).getroot()
     f.close()
-    f = open(BASE_ROAD_FILE_PATH, 'r')
+    f = open(file_path, 'r')
     xml_data = f.readline()
     for line in f:
         if line[:4] == '<net':
@@ -69,6 +69,13 @@ def load_base_file():
     return environment, components
 
 
+def load_base_file():
+    """
+     load_file function specifically for base road file definied in settings.
+    """
+    return load_file(file_path=BASE_ROAD_FILE_PATH)
+
+
 def generate_flow_file(components:dict):
     """
      Generates a semi-empty .JSON file with IDs of outside connection edges
@@ -101,12 +108,12 @@ def generate_flow_file(components:dict):
             if edge._outside_connection:
                 if edge._outside_connection_type == OutsideConnectionType('in'):
                     result_json[edge_id] = {
-                        'flow': get_available_vehicle_types(edge, lambda e,v: 0),
+                        'flow': get_available_vehicle_types(edge, lambda e,v: 500),
                         'outside_connections': get_available_vehicle_types(edge, get_available_outside_connections),
                     }
                 else:
                     result_json[edge_id] = {
-                        'flow': get_available_vehicle_types(edge, lambda e,v: 0),
+                        'flow': get_available_vehicle_types(edge, lambda e,v: 500),
                     }
             n_processed += 1
         with open(BASE_FLOW_FILE_PATH, 'w+') as f:
