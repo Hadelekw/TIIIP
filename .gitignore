@@ -1,11 +1,8 @@
 /venv/
 *.*~
 *.net.xml
+*.rou.xml
+*.sumocfg
 *.json
 /__pycache__/
 /*/__pycache__/
-test.*
-test*.*
-road_file*.net.xml
-routes_file*.rou.xml
-sumo_config.sumocfg
