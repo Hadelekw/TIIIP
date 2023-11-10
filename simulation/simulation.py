@@ -26,10 +26,6 @@ def run():
     data = DATA_SCHEMA
 
     bot_left, top_right = traci.simulation.getNetBoundary()
-    bot_left = list(bot_left); top_right = list(top_right)
-    for i in range(len(top_right)):
-        bot_left[i] /= 10
-        top_right[i] /= 10
     total_area_of_simulation = (top_right[0] - bot_left[0]) * (top_right[1] - bot_left[1])
 
     for step in range(1000):

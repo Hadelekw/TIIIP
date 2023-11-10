@@ -16,7 +16,7 @@ from .components import *
 from .components_functions import *
 
 
-def load_file(file_path):
+def load_file(road_file_path):
     """
      Analysis of a road file in .NET.XML format. It returns provided environment
      (xml data, net data, location data) and components (everything else which is mutable).

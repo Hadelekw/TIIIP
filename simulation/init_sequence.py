@@ -30,6 +30,17 @@ def init():
     generate_sumo_config(BASE_SUMO_CONFIG_FILE_PATH, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH)
 
 
+def init_with_components(environment, components):
+    flow_file = open(BASE_FLOW_FILE_PATH)
+    flow_data = json.load(flow_file); flow_file.close()
+    if VALIDATE_FLOW_DATA:
+        validate_flow_data(flow_data)
+    flow_data = solve_flow_matrix(flow_data, components)
+    vehicle_types = get_vehicle_types()
+    generate_rou_xml(environment, components, vehicle_types, flow_data, BASE_ROUTES_FILE_PATH)
+    generate_sumo_config(BASE_SUMO_CONFIG_FILE_PATH, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH)
+
+
 def validate_flow_data(flow_data:dict):
     """
      Validates the values typed into the flow file. The sum of the flow into the simulation

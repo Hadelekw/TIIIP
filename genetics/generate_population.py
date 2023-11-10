@@ -1,5 +1,5 @@
 """
- File for managing the generation of road files.
+ File for managing the mutation and crossing of components.
 """
 
 import sys
