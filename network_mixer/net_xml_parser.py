@@ -21,10 +21,10 @@ def load_file(road_file_path):
      Analysis of a road file in .NET.XML format. It returns provided environment
      (xml data, net data, location data) and components (everything else which is mutable).
     """
-    f = open(file_path, 'r')
+    f = open(road_file_path, 'r')
     root = et.parse(f).getroot()
     f.close()
-    f = open(file_path, 'r')
+    f = open(road_file_path, 'r')
     xml_data = f.readline()
     for line in f:
         if line[:4] == '<net':
@@ -73,7 +73,7 @@ def load_base_file():
     """
      load_file function specifically for base road file definied in settings.
     """
-    return load_file(file_path=BASE_ROAD_FILE_PATH)
+    return load_file(road_file_path=BASE_ROAD_FILE_PATH)
 
 
 def generate_flow_file(components:dict):

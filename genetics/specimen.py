@@ -1,5 +1,5 @@
 """
- File defining the Specimen class which holds data for road files.
+ File defining the Specimen class which holds data for road files and all functions relating to it.
 """
 
 
@@ -12,7 +12,7 @@ class Specimen:
             setattr(self, component_type, component)
 
 
-def generate_traffic_lights_matrix(specimen_list):
+def generate_traffic_lights_matrix(specimens):
     result = []
-    for specimen in specimen_list:
+    for specimen in specimens:
         pass
