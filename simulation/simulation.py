@@ -20,8 +20,8 @@ DATA_SCHEMA = {
 }
 
 
-def run():
-    traci.start(['sumo', '-c', BASE_SUMO_CONFIG_FILE_PATH, '--junction-taz'])
+def run(sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
+    traci.start(['sumo', '-c', sumo_config_file_path, '--junction-taz'])
 
     data = DATA_SCHEMA
 

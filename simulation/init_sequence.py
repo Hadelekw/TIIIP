@@ -15,30 +15,20 @@ from .vehicle_classes import VEHICLE_CLASSES
 from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH, BASE_SUMO_CONFIG_FILE_PATH
 
 
-def init():
+def init(road_file_path=BASE_ROAD_FILE_PATH, flow_file_path=BASE_FLOW_FILE_PATH, routes_file_path=BASE_ROUTES_FILE_PATH, sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
     """
-     The main procedure.
+     The main initial procedure.
     """
-    environment, components = network_mixer.load_base_file()
-    flow_file = open(BASE_FLOW_FILE_PATH)
+    environment, components = network_mixer.load_file(road_file_path)
+    flow_file = open(flow_file_path)
     flow_data = json.load(flow_file); flow_file.close()
     if VALIDATE_FLOW_DATA:
         validate_flow_data(flow_data)
     flow_data = solve_flow_matrix(flow_data, components)
     vehicle_types = get_vehicle_types()
-    generate_rou_xml(environment, components, vehicle_types, flow_data, BASE_ROUTES_FILE_PATH)
-    generate_sumo_config(BASE_SUMO_CONFIG_FILE_PATH, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH)
-
-
-def init_with_components(environment, components):
-    flow_file = open(BASE_FLOW_FILE_PATH)
-    flow_data = json.load(flow_file); flow_file.close()
-    if VALIDATE_FLOW_DATA:
-        validate_flow_data(flow_data)
-    flow_data = solve_flow_matrix(flow_data, components)
-    vehicle_types = get_vehicle_types()
-    generate_rou_xml(environment, components, vehicle_types, flow_data, BASE_ROUTES_FILE_PATH)
-    generate_sumo_config(BASE_SUMO_CONFIG_FILE_PATH, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH)
+    generate_rou_xml(environment, components, vehicle_types, flow_data, routes_file_path)
+    generate_sumo_config(sumo_config_file_path, road_file_path, routes_file_path)
+    return environment, components
 
 
 def validate_flow_data(flow_data:dict):
