@@ -131,6 +131,8 @@ def generate_flow_file(components:dict):
                 return False
 
 
+ORDER_OF_BUILD = ['type', 'edge', 'tlLogic', 'junction', 'connection', 'roundabout']
+
 def build_file(environment:Environment, components:dict, save_file_path:str):
     """
      Constructs .NET.XML file based on the provided environment and components.
@@ -139,8 +141,11 @@ def build_file(environment:Environment, components:dict, save_file_path:str):
         f.write('<?xml {}?>\n\n'.format(environment.get_xml_xml_line_attribs()))
         f.write('<net {}>\n\n'.format(environment.get_net_xml_line_attribs()))
         f.write('    <location {}/>\n\n'.format(environment.get_location_xml_line_attribs()))
-        for key, value in components.items():
-            for _, component in value.items():
+        for key in ORDER_OF_BUILD:
+            for component in components[key].values():
                 f.write(component.get_xml_line())
             f.write('\n')
+        # for key, value in components.items():
+        #     for _, component in value.items():
+        #         f.write(component.get_xml_line())
         f.write('\n</net>')
