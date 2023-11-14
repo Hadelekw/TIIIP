@@ -11,6 +11,7 @@ from os.path import exists
 import xml.etree.ElementTree as et
 import json
 
+import simulation
 from settings import BASE_ROAD_FILE_PATH, BASE_FLOW_FILE_PATH, PROMPT_FLOW_FILE_CREATION
 from .components import *
 from .components_functions import *
@@ -86,7 +87,15 @@ def generate_flow_file(components:dict):
         candidate_edges = []
         for edge_ in components['edge'].values():
             if edge_._outside_connection and edge_._outside_connection_type == OutsideConnectionType('out'):
-                if vehicle_class in edge_.type.allow:
+                if hasattr(edge_, 'type'):
+                    if vehicle_class in edge_.type.allow:
+                        candidate_edges.append(edge_)
+                elif hasattr(edge_, 'allow'):
+                    if vehicle_class in edge_.allow:
+                        candidate_edges.append(edge_)
+                else:
+                    if edge_.id[1:] == edge.id or edge.id[1:] == edge_.id:
+                        continue
                     candidate_edges.append(edge_)
         for candidate_edge in candidate_edges:
             if if_bfs(edge, candidate_edge, components):
@@ -95,9 +104,17 @@ def generate_flow_file(components:dict):
 
     def get_available_vehicle_types(edge:Edge, function_to_apply):
         result = {}
-        if hasattr(edge.type, 'allow'):
-            for vehicle in edge.type.allow:
-                result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
+        if hasattr(edge, 'type'):
+            if hasattr(edge.type, 'allow'):
+                for vehicle in edge.type.allow:
+                    result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
+        else:
+            if hasattr(edge, 'allow'):
+                for vehicle in edge.allow:
+                    result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
+            else:
+                for vehicle in simulation.VEHICLE_CLASSES:
+                    result[vehicle] = function_to_apply(edge, vehicle)
         return result
 
     def process():

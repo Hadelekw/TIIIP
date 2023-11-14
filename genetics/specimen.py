@@ -38,4 +38,4 @@ def mutate(specimen):
 
 
 def validate_tllogic(tllogic):
-    return True
+    pass
