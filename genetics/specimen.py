@@ -13,8 +13,8 @@ import network_mixer.mixer as mixer
 
 class Specimen:
 
-    def __init__(self, environment, components, parent=None):
-        self.parent = parent
+    def __init__(self, environment, components, parents=None):
+        self.parents = parents
         self.environment = environment
         for component_type, component in components.items():
             setattr(self, component_type, component)
@@ -22,7 +22,7 @@ class Specimen:
     @property
     def components(self):
         attrs = self.__dict__
-        attrs.pop('parent')
+        attrs.pop('parents')
         attrs.pop('environment')
         return attrs
 

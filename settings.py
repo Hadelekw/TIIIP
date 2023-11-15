@@ -27,6 +27,8 @@ BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
 NUMBER_OF_GENERATIONS = 10
 NUMBER_PER_GENERATION = 20
 
+BASE_RESULTS_PATH = 'results'
+
 
 # Base modes of transport weights (valuability).
 # If a mode of transport isn't on this list, it is not supported.
