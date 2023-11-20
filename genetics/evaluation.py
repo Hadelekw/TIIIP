@@ -8,12 +8,14 @@ sys.path.append('../')
 from simulation import DATA_SCHEMA
 
 
-def evaluate(data):
+def evaluate(sim_data):
     result = 0
-    new_data = {}
+    data = {}
+    if 'arrived_per_step' in DATA_SCHEMA:
+        data['total_arrived'] = sum(sim_data['arrived_per_step'])
     if 'vehicles_per_step' in DATA_SCHEMA:
-        new_data['total_vehicles'] = sum(data['vehicles_per_step'])
+        data['total_vehicles'] = sum(sim_data['vehicles_per_step'])
     if 'co2_emissions_per_step' in DATA_SCHEMA:
-        new_data['total_co2_emissions'] = sum(data['co2_emissions_per_step'])
-    result = -sum([new_data[key] for key in new_data])
+        data['total_co2_emissions'] = sum(sim_data['co2_emissions_per_step'])
+    result = data['total_arrived'] - data['total_vehicles'] - data['total_co2_emissions']
     return result
