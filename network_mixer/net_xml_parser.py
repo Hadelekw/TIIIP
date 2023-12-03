@@ -88,15 +88,17 @@ def generate_flow_file(components:dict):
         for edge_ in components['edge'].values():
             if edge_._outside_connection and edge_._outside_connection_type == OutsideConnectionType('out'):
                 if hasattr(edge_, 'type'):
-                    if vehicle_class in edge_.type.allow:
+                    if edge_.type.allow:
+                        if vehicle_class in edge_.type.allow:
+                            candidate_edges.append(edge_)
+                    else:
                         candidate_edges.append(edge_)
                 elif hasattr(edge_, 'allow'):
                     if vehicle_class in edge_.allow:
                         candidate_edges.append(edge_)
                 else:
                     if edge_.id[1:] == edge.id or edge.id[1:] == edge_.id:
-                        continue
-                    candidate_edges.append(edge_)
+                        pass
         for candidate_edge in candidate_edges:
             if if_bfs(edge, candidate_edge, components):
                 result.append(candidate_edge.id)
@@ -106,8 +108,12 @@ def generate_flow_file(components:dict):
         result = {}
         if hasattr(edge, 'type'):
             if hasattr(edge.type, 'allow'):
-                for vehicle in edge.type.allow:
-                    result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
+                if edge.type.allow:
+                    for vehicle in edge.type.allow:
+                        result[vehicle.__name__.lower()] = function_to_apply(edge, vehicle)
+                else:
+                    for vehicle in simulation.VEHICLE_CLASSES:
+                        result[vehicle] = function_to_apply(edge, vehicle)
         else:
             if hasattr(edge, 'allow'):
                 for vehicle in edge.allow:

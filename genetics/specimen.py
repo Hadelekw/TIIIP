@@ -31,7 +31,11 @@ class Specimen:
 def mutate(specimen):
     # while not validate_tllogic(specimen.tlLogic):
     for tllogic in specimen.tlLogic.values():
-        mixer.generate_tl_program(tllogic)
+        chance = random.random()
+        if chance < 0.3:
+            mixer.generate_tl_program(tllogic)
+        else:
+            pass
     specimen.update_components()
     return specimen
 
