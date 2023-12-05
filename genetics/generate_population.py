@@ -17,11 +17,11 @@ def generate_population(population):
     result = []
     population_scores = [(specimen, specimen.score) for specimen in population]
     population_scores = sorted(population_scores, key=lambda x: x[1], reverse=True)
-    best_scorers = []
+    print(SPARED_PERCENTAGE * NUMBER_PER_GENERATION)
     print(population_scores)
-    for score in population_scores[:int(SPARED_PERCENTAGE * NUMBER_PER_GENERATION)]:
-        print(score)
-        best_scorers.append(score[0])
+    population_scores = population_scores[:int(SPARED_PERCENTAGE * NUMBER_PER_GENERATION)]
+    best_scorers = [score[0] for score in population_scores]
+    
     result.extend(best_scorers)
     while len(result) != NUMBER_PER_GENERATION:
         chance = random.random()

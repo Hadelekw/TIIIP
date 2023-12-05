@@ -25,8 +25,8 @@ BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
 
 # Generations settings for the genetic algorithm
 NUMBER_OF_GENERATIONS = 20
-NUMBER_PER_GENERATION = 5
-SPARED_PERCENTAGE = 0.1
+NUMBER_PER_GENERATION = 20
+SPARED_PERCENTAGE = 0.2
 
 BASE_RESULTS_PATH = 'results'
 
