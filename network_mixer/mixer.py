@@ -10,10 +10,10 @@ from .components import *
 
 
 POSSIBLE_SIGNAL_STATES = {
-    'G': ['y'],
-    'g': ['y'],
-    'r': ['y'],
-    'y': ['G', 'g', 'r'],
+    'G': ['y', 'G'],
+    'g': ['y', 'g'],
+    'r': ['y', 'r'],
+    'y': ['y', 'G', 'g', 'r'],
 }
 
 # Example function

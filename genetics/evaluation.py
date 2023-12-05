@@ -17,5 +17,5 @@ def evaluate(sim_data):
         data['total_vehicles'] = sum(sim_data['vehicles_per_step'])
     if 'co2_emissions_per_step' in DATA_SCHEMA:
         data['total_co2_emissions'] = sum(sim_data['co2_emissions_per_step'])
-    result = -data['total_vehicles']
+    result = data['total_arrived']
     return result

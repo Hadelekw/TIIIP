@@ -13,8 +13,9 @@ import network_mixer.mixer as mixer
 
 class Specimen:
 
-    def __init__(self, environment, components, parents=None):
-        self.parents = parents
+    def __init__(self, environment, components):
+        self.sim_data = []
+        self.score = 0
         self.environment = environment
         self.components = components
         for component_type, component in components.items():
