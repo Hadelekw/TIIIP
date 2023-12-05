@@ -33,30 +33,3 @@ def generate_population(population):
             new_specimen = mutate(base_specimen)
         result.append(new_specimen)
     return result
-
-
-def degenerate_population(population, data):
-    result = []
-
-    # scores = [evaluate(sim_result) for sim_result in data.values()]
-    # population_scores = {specimen: score for specimen, score in zip(population, scores)}
-    # population_scores = dict(sorted(population_scores.items(), key=lambda item: item[1], reverse=True))
-    population_scores = {key: evaluate(value) for key, value in data.items()}
-    best_scorers = []
-    print(population_scores)
-    while len(population_scores) > SPARED_PERCENTAGE * NUMBER_PER_GENERATION:
-        population_scores.pop()
-    for specimen in population_scores:
-        result.append(specimen)
-        best_scorers.append(specimen)
-    print(best_scorers)
-    while len(result) != NUMBER_PER_GENERATION:
-        chance = random.random()
-        if chance > 0.5:  # crossover
-            parents = random.sample(best_scorers, 2)
-            new_specimen = crossover(parents)
-        else:  # mutation
-            base_specimen = random.choice(best_scorers)
-            new_specimen = mutate(base_specimen)
-        result.append(new_specimen)
-    return result

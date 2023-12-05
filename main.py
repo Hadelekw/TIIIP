@@ -5,6 +5,8 @@
 import os
 import copy
 
+import matplotlib.pyplot as plt
+
 import network_mixer, simulation, genetics
 from settings import *
 
@@ -19,6 +21,8 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
     base_specimen = get_base_specimen()
     population = [genetics.mutate(copy.deepcopy(base_specimen)) for _ in range(n_per_generation)]
 
+    average_scores_per_generation = []
+
     for i in range(n_generations):
         for j in range(n_per_generation):
             if not os.path.exists('{}/{}'.format(results_path, i)):
@@ -28,11 +32,11 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
         for j in range(n_per_generation):
             print('------------\nGENERATION {}/{} SPECIMEN {}/{}\n------------'.format(i + 1, n_generations, j + 1, n_per_generation))
             population[j].sim_data = simulation.run('{}/{}/{}.sumocfg'.format(results_path, i, j))
-            # print(genetics.evaluate(population[j].sim_data))
             population[j].score = genetics.evaluate(population[j].sim_data)
-            # print(population[j].score)
-            # print(genetics.evaluate(population[j].sim_data))
+        average_scores_per_generation.append(sum([specimen.score for specimen in population]) / len(population))
         population = genetics.generate_population(population)
+    plt.plot(range(len(average_scores_per_generation)), average_scores_per_generation)
+    plt.show()
 
 
 def get_base_specimen(road_file_path=BASE_ROAD_FILE_PATH, flow_file_path=BASE_FLOW_FILE_PATH, routes_file_path=BASE_ROUTES_FILE_PATH, sumo_config_path=BASE_SUMO_CONFIG_FILE_PATH):
