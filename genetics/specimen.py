@@ -6,6 +6,7 @@ import sys
 sys.path.append('../')
 
 import random
+import copy
 
 from network_mixer import build_file
 import network_mixer.mixer as mixer
@@ -31,22 +32,19 @@ class Specimen:
 
 def mutate(specimen):
     # while not validate_tllogic(specimen.tlLogic):
-    for tllogic in specimen.tlLogic.values():
-        chance = random.random()
-        if chance < 0.3:
-            mixer.generate_tl_program(tllogic)
-        else:
-            pass
-    specimen.update_components()
-    return specimen
+    new_specimen = copy.deepcopy(specimen)
+    for id_, tllogic in specimen.tlLogic.items():
+        new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic)
+    new_specimen.update_components()
+    # print(new_specimen.tlLogic)
+    return new_specimen
 
 
 def crossover(parents):
-    result = parents[0]
+    result = copy.deepcopy(parents[0])
     for key, value in parents[1].tlLogic.items():
         if random.random() > 0.5:
             result.tlLogic[key] = value
-    result.parents = parents
     result.update_components()
     return result
 

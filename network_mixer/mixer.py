@@ -10,15 +10,11 @@ from .components import *
 
 
 POSSIBLE_SIGNAL_STATES = {
-    'G': ['y', 'G'],
+    'G': ['G', 'g'],
     'g': ['y', 'g'],
     'r': ['y', 'r'],
     'y': ['y', 'G', 'g', 'r'],
 }
-
-# Example function
-def name_edge(edges:dict, edge_id:str, new_name:str):
-    edges[edge_id].name = new_name
 
 
 def generate_random_new_phase(length):
@@ -41,7 +37,7 @@ def generate_phase_states(length):
     return states
 
 
-def generate_tl_program(tllogic):
+def mutate_tl_program(tllogic):
     for _ in range(random.randint(1, 3)):  # random mutation count
         chance = random.random()
         if chance < 0.1:
@@ -52,3 +48,20 @@ def generate_tl_program(tllogic):
         else:
             if len(tllogic._phases) > 1:
                 tllogic._phases.remove(random.choice(tllogic._phases))
+    return tllogic
+
+
+def generate_tllogic(id_):
+    result = TLLogic(
+        **{
+            'id': id_,
+            'type': TLLogicType('static'),
+            'programID': '0',
+            'offset': 0,
+        }
+    )
+    phases_number = random.randint(1, 8)
+    phase_states_length = random.randint(1, 32)
+    for _ in range(phases_number):
+        result._phases.append(generate_random_new_phase(phase_states_length))
+    return result
