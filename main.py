@@ -23,6 +23,7 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
     population = genetics.generate_new_population(base_specimen)
 
     average_scores_per_generation = []
+    max_score_per_generation = []
 
     for i in range(n_generations):
         for j in range(n_per_generation):
@@ -32,14 +33,13 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
             simulation.generate_sumo_config('{}/{}/{}.sumocfg'.format(results_path, i, j), '{}.net.xml'.format(j), '../../{}'.format(BASE_ROUTES_FILE_PATH))
         for j in range(n_per_generation):
             print('------------\nGENERATION {}/{} SPECIMEN {}/{}\n------------'.format(i + 1, n_generations, j + 1, n_per_generation))
-            try:
-                population[j].sim_data = simulation.run('{}/{}/{}.sumocfg'.format(results_path, i, j))
-                population[j].score = genetics.evaluate(population[j].sim_data)
-            except:
-                print('Failed')
+            population[j].sim_data = simulation.run('{}/{}/{}.sumocfg'.format(results_path, i, j))
+            population[j].score = genetics.evaluate(population[j].sim_data)
         average_scores_per_generation.append(sum([specimen.score for specimen in population]) / len(population))
+        max_score_per_generation.append(max([specimen.score for specimen in population]))
         population = genetics.generate_population(population)
     plt.plot(range(len(average_scores_per_generation)), average_scores_per_generation)
+    plt.plot(range(len(max_score_per_generation)), max_score_per_generation)
     plt.show()
 
 

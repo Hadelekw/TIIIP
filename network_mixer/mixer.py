@@ -51,7 +51,7 @@ def mutate_tl_program(tllogic):
     return tllogic
 
 
-def generate_tllogic(id_):
+def generate_tllogic(id_, length):
     result = TLLogic(
         **{
             'id': id_,
@@ -61,7 +61,6 @@ def generate_tllogic(id_):
         }
     )
     phases_number = random.randint(1, 8)
-    phase_states_length = random.randint(1, 32)
     for _ in range(phases_number):
-        result._phases.append(generate_random_new_phase(phase_states_length))
+        result._phases.append(generate_random_new_phase(length))
     return result

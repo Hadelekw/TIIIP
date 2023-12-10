@@ -42,9 +42,10 @@ def mutate(specimen):
 
 def crossover(parents):
     result = copy.deepcopy(parents[0])
-    for key, value in parents[1].tlLogic.items():
-        if random.random() > 0.5:
-            result.tlLogic[key] = value
+    while result.tlLogic == parents[0].tlLogic:
+        for key, value in parents[1].tlLogic.items():
+            if random.random() > 0.5:
+                result.tlLogic[key] = value
     result.update_components()
     return result
 
