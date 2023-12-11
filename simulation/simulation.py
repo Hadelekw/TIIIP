@@ -15,7 +15,7 @@ from settings import BASE_SUMO_CONFIG_FILE_PATH
 
 DATA_SCHEMA = {
     'arrived_per_step': [],
-    # 'vehicles_per_step': [],
+    'vehicles_per_step': [],
     # 'co2_emissions_per_step': [],
     # 'average_co2_emissions_per_step_per_liter': [],
 }
@@ -28,11 +28,8 @@ def run(sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
     for key in data:
         data[key] = []
 
-    # bot_left, top_right = traci.simulation.getNetBoundary()
-    # total_area_of_simulation = (top_right[0] - bot_left[0]) * (top_right[1] - bot_left[1])
-
     for step in range(1000):
-        data['arrived_per_step'].append(len(traci.simulation.getArrivedIDList()))
+        data['arrived_per_step'].append(traci.simulation.getArrivedNumber())
         if 'vehicles_per_step' in DATA_SCHEMA:
             data['vehicles_per_step'].append(traci.vehicle.getIDCount())
         if 'co2_emissions_per_step' in DATA_SCHEMA:
