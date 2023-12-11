@@ -5,6 +5,7 @@
 """
 
 import random
+import copy
 
 from .components import *
 
@@ -38,17 +39,18 @@ def generate_phase_states(length):
 
 
 def mutate_tl_program(tllogic):
+    new_tllogic = copy.deepcopy(tllogic)
     for _ in range(random.randint(1, 3)):  # random mutation count
         chance = random.random()
         if chance < 0.1:
-            tllogic._phases.append(generate_random_new_phase(len(tllogic._phases[0].state)))
+            new_tllogic._phases.append(generate_random_new_phase(len(tllogic._phases[0].state)))
         elif 0.1 <= chance < 0.9:
-            for phase in tllogic._phases:
+            for phase in new_tllogic._phases:
                 phase.state = generate_phase_states(len(phase.state))
         else:
-            if len(tllogic._phases) > 1:
-                tllogic._phases.remove(random.choice(tllogic._phases))
-    return tllogic
+            if len(new_tllogic._phases) > 1:
+                new_tllogic._phases.remove(random.choice(new_tllogic._phases))
+    return new_tllogic
 
 
 def generate_tllogic(id_, length):

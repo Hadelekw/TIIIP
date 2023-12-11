@@ -23,7 +23,6 @@ def generate_population(population):
     result = []
     population_scores = [(specimen, specimen.score) for specimen in population]
     population_scores = sorted(population_scores, key=lambda x: x[1], reverse=True)
-    print(population_scores)
     population_scores = population_scores[:int(SPARED_PERCENTAGE * NUMBER_PER_GENERATION)]
     best_scorers = [score[0] for score in population_scores]
 
@@ -33,11 +32,12 @@ def generate_population(population):
         if chance > 0.5 and len(best_scorers) > 2:  # crossover
             parents = pop_random_specimen(best_scorers), pop_random_specimen(best_scorers)
             new_specimen = crossover(parents)
+            new_specimen.id = 'C{}-{}'.format(parents[0].id, parents[1].id)
         else:  # mutation
             base_specimen = random.choice(best_scorers)
             new_specimen = mutate(base_specimen)
+            new_specimen.id = 'M{}'.format(base_specimen.id)
         result.append(new_specimen)
-        print(result)
     return result
 
 
@@ -45,8 +45,9 @@ def generate_new_population(base_specimen):
     result = []
     tllogic_ids = [tllogic.id for tllogic in base_specimen.tlLogic.values()]
     length = [len(tllogic._phases[0].state) for tllogic in base_specimen.tlLogic.values()][0]
-    for _ in range(NUMBER_PER_GENERATION):
+    for i in range(NUMBER_PER_GENERATION):
         new_specimen = copy.deepcopy(base_specimen)
+        new_specimen.id = 'B{}'.format(i)
         new_specimen.tlLogic = {}
         for id_ in tllogic_ids:
             new_specimen.tlLogic[id_] = mixer.generate_tllogic(id_, length)

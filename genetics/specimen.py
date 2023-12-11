@@ -14,7 +14,8 @@ import network_mixer.mixer as mixer
 
 class Specimen:
 
-    def __init__(self, environment, components):
+    def __init__(self, environment, components, id_=''):
+        self.id = id_
         self.sim_data = []
         self.score = 0
         self.environment = environment
@@ -29,6 +30,16 @@ class Specimen:
         for component in self.components:
             self.components[component] = getattr(self, component)
 
+    def get_log(self, generation, n):
+        result = 'GEN: {} / N: {} / ID: {}\n------------'.format(generation, n, self.id)
+        result += 'SCORE: {}\n'.format(self.score)
+        for tllogic in self.tlLogic.values():
+            result += 'TL {}\n'.format(tllogic.id)
+            for phase in tllogic._phases:
+                result += '{}\n'.format(''.join([state.value for state in phase.state]))
+        result += '------------\n'
+        return result
+
 
 def mutate(specimen):
     # while not validate_tllogic(specimen.tlLogic):
@@ -36,7 +47,6 @@ def mutate(specimen):
     for id_, tllogic in specimen.tlLogic.items():
         new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic)
     new_specimen.update_components()
-    # print(new_specimen.tlLogic)
     return new_specimen
 
 
