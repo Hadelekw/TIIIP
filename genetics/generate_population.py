@@ -50,7 +50,7 @@ def generate_new_population(base_specimen):
         new_specimen.id = 'B{}'.format(i)
         new_specimen.tlLogic = {}
         for id_ in tllogic_ids:
-            new_specimen.tlLogic[id_] = mixer.generate_tllogic(id_, length)
+            new_specimen.tlLogic[id_] = mixer.generate_tllogic(id_, length, base_specimen.junction[id_]._requests)
         new_specimen.update_components()
         result.append(new_specimen)
     return result

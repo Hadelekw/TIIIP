@@ -19,7 +19,6 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
         last_dir = max([int(d) for d in dirs])
         os.makedirs('{}/{}'.format(results_path, last_dir + 1))
     base_specimen = get_base_specimen()
-    # population = [genetics.mutate(copy.deepcopy(base_specimen)) for _ in range(n_per_generation)]
     population = genetics.generate_new_population(base_specimen)
 
     log_file = open('{}/log.log'.format(results_path), 'w+')

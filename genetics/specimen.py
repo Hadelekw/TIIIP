@@ -45,7 +45,7 @@ def mutate(specimen):
     # while not validate_tllogic(specimen.tlLogic):
     new_specimen = copy.deepcopy(specimen)
     for id_, tllogic in specimen.tlLogic.items():
-        new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic)
+        new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic, specimen.junction[id_]._requests)
     new_specimen.update_components()
     return new_specimen
 
