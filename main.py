@@ -16,6 +16,8 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
     if not dirs:
         os.makedirs('{}/0'.format(results_path))
     else:
+        if 'log.log' in dirs:
+            dirs.remove('log.log')
         last_dir = max([int(d) for d in dirs])
         os.makedirs('{}/{}'.format(results_path, last_dir + 1))
     base_specimen = get_base_specimen()

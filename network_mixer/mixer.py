@@ -12,21 +12,25 @@ from .components import *
 
 POSSIBLE_SIGNAL_STATES = {
     'G': {
-        0: ['G', 'g'],
-        1: ['r', 'y'],
+        0: ['G', 'g', 's'],  # If there's no collision
+        1: ['r', 'y'],  # If there is collision
     },
     'g': {
-        0: ['G', 'g'],
+        0: ['G', 'g', 's'],
         1: ['r', 'y'],
     },
     'r': {
-        0: ['r', 'y'],
-        1: ['G', 'g'],
+        0: ['r', 'y', 's'],
+        1: ['G', 'g', 's'],
     },
     'y': {
-        0: ['y', 'G', 'g', 'r'],
-        1: ['y', 'G', 'g', 'r'],
-    }
+        0: ['y', 'G', 'g', 'r', 's'],
+        1: ['y', 'G', 'g', 'r', 's'],
+    },
+    's': {
+        0: ['G', 'g', 'y', 'r'],
+        1: ['r', 'y']
+    },
 }
 
 

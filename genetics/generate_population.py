@@ -7,6 +7,7 @@ sys.path.append('../')
 
 import random
 import copy
+import uuid
 
 import network_mixer.mixer as mixer
 from settings import NUMBER_PER_GENERATION, SPARED_PERCENTAGE
@@ -32,11 +33,11 @@ def generate_population(population):
         if chance > 0.5 and len(best_scorers) > 2:  # crossover
             parents = pop_random_specimen(best_scorers), pop_random_specimen(best_scorers)
             new_specimen = crossover(parents)
-            new_specimen.id = 'C{}-{}'.format(parents[0].id, parents[1].id)
+            new_specimen.id = uuid.uuid4()
         else:  # mutation
             base_specimen = random.choice(best_scorers)
             new_specimen = mutate(base_specimen)
-            new_specimen.id = 'M{}'.format(base_specimen.id)
+            new_specimen.id = uuid.uuid4()
         result.append(new_specimen)
     return result
 
