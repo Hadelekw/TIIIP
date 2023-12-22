@@ -41,6 +41,7 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
         average_scores_per_generation.append(sum([specimen.score for specimen in population]) / len(population))
         max_score_per_generation.append(max([specimen.score for specimen in population]))
         population = genetics.generate_population(population)
+    pause = input()
     plt.plot(range(len(average_scores_per_generation)), average_scores_per_generation)
     plt.plot(range(len(max_score_per_generation)), max_score_per_generation)
     plt.show()

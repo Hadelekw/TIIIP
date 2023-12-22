@@ -1,7 +1,5 @@
 """
  File containing functions for available changes in the network.
- Because the extend of possible changes is very large and can
- break stuff easily.
 """
 
 import random
@@ -20,12 +18,12 @@ POSSIBLE_SIGNAL_STATES = {
         1: ['r', 'y'],
     },
     'r': {
-        0: ['r', 'y', 's'],
+        0: ['r', 'y'],
         1: ['G', 'g', 's'],
     },
     'y': {
-        0: ['y', 'G', 'g', 'r', 's'],
-        1: ['y', 'G', 'g', 'r', 's'],
+        0: ['y', 'G', 'g', 's'],
+        1: ['y', 'r'],
     },
     's': {
         0: ['G', 'g', 'y', 'r'],
@@ -60,9 +58,9 @@ def generate_phase_states(length, requests):
     return states
 
 
-def mutate_tl_program(tllogic, requests):
+def mutate_tl_program(tllogic, requests, min_mutation_count=0, max_mutation_count=3):
     new_tllogic = copy.deepcopy(tllogic)
-    for _ in range(random.randint(1, 3)):  # random mutation count
+    for _ in range(random.randint(min_mutation_count, max_mutation_count)):
         chance = random.random()
         if chance < 0.1:
             new_tllogic._phases.append(generate_random_new_phase(len(tllogic._phases[0].state), requests))

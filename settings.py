@@ -24,12 +24,14 @@ BASE_ROUTES_FILE_PATH = 'routes_file.rou.xml'
 BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
 
 # Generations settings for the genetic algorithm
-NUMBER_OF_GENERATIONS = 60
-NUMBER_PER_GENERATION = 40
+NUMBER_OF_GENERATIONS = 20
+NUMBER_PER_GENERATION = 60
 SPARED_PERCENTAGE = 0.4
 
 BASE_RESULTS_PATH = 'results'
 
+MIN_MUTATION_COUNT = 0
+MAX_MUTATION_COUNT = 10
 
 # Base modes of transport weights (valuability).
 # If a mode of transport isn't on this list, it is not supported.

@@ -16,7 +16,11 @@ def evaluate(sim_data):
     if 'vehicles_per_step' in DATA_SCHEMA:
         data['total_vehicles'] = sum(sim_data['vehicles_per_step'])
         data['average_vehicles'] = data['total_vehicles'] / len(sim_data['vehicles_per_step'])
+    if 'collisions_per_step' in DATA_SCHEMA:
+        data['total_collisions'] = sum(sim_data['collisions_per_step'])
+    if 'teleported_per_step' in DATA_SCHEMA:
+        data['total_teleported'] = sum(sim_data['teleported_per_step'])
     if 'co2_emissions_per_step' in DATA_SCHEMA:
         data['total_co2_emissions'] = sum(sim_data['co2_emissions_per_step'])
-    result = data['total_arrived'] - data['average_vehicles']
+    result = data['total_arrived'] - data['average_vehicles'] - 2 * data['total_collisions'] - 10 * data['total_teleported']
     return result

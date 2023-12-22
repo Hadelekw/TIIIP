@@ -10,6 +10,7 @@ import copy
 
 from network_mixer import build_file
 import network_mixer.mixer as mixer
+from settings import MIN_MUTATION_COUNT, MAX_MUTATION_COUNT
 
 
 class Specimen:
@@ -31,21 +32,22 @@ class Specimen:
             self.components[component] = getattr(self, component)
 
     def get_log(self, generation, n):
-        result = 'GEN: {} / N: {} / ID: {}\n------------'.format(generation, n, self.id)
-        result += 'SCORE: {}\n'.format(self.score)
+        result = 'GEN {} N {} ID {} '.format(generation, n, self.id)
+        result += 'SCORE {}'.format(self.score)
         for tllogic in self.tlLogic.values():
-            result += 'TL {}\n'.format(tllogic.id)
+            result += ' TL {}['.format(tllogic.id)
             for phase in tllogic._phases:
-                result += '{}\n'.format(''.join([state.value for state in phase.state]))
-        result += '------------\n'
+                result += '{} '.format(''.join([state.value for state in phase.state]))
+            result = result[:-1]
+            result += ']'
+        result += '\n'
         return result
 
 
 def mutate(specimen):
-    # while not validate_tllogic(specimen.tlLogic):
     new_specimen = copy.deepcopy(specimen)
     for id_, tllogic in specimen.tlLogic.items():
-        new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic, specimen.junction[id_]._requests)
+        new_specimen.tlLogic[id_] = mixer.mutate_tl_program(tllogic, specimen.junction[id_]._requests, MIN_MUTATION_COUNT, MAX_MUTATION_COUNT)
     new_specimen.update_components()
     return new_specimen
 
@@ -61,7 +63,3 @@ def crossover(parents):
                 result.tlLogic[key]._phases[random.randint(0, len(result.tlLogic[key]._phases))] = copy.deepcopy(random.choice(value._phases))
     result.update_components()
     return result
-
-
-def validate_tllogic(tllogic):
-    pass
