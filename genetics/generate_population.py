@@ -45,13 +45,15 @@ def generate_population(population):
 def generate_new_population(base_specimen):
     result = []
     tllogic_ids = [tllogic.id for tllogic in base_specimen.tlLogic.values()]
-    length = [len(tllogic._phases[0].state) for tllogic in base_specimen.tlLogic.values()][0]
+    length = [len(tllogic._phases[0].state) for tllogic in base_specimen.tlLogic.values()]
     for i in range(NUMBER_PER_GENERATION):
         new_specimen = copy.deepcopy(base_specimen)
         new_specimen.id = 'B{}'.format(i)
         new_specimen.tlLogic = {}
+        i = 0
         for id_ in tllogic_ids:
-            new_specimen.tlLogic[id_] = mixer.generate_tllogic(id_, length, base_specimen.junction[id_]._requests)
+            new_specimen.tlLogic[id_] = mixer.generate_tllogic(id_, length[i], base_specimen.junction[id_]._requests)
+            i += 1
         new_specimen.update_components()
         result.append(new_specimen)
     return result
