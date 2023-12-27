@@ -25,12 +25,12 @@ BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
 
 # Generations settings for the genetic algorithm
 NUMBER_OF_GENERATIONS = 60
-NUMBER_PER_GENERATION = 60
+NUMBER_PER_GENERATION = 40
 SPARED_PERCENTAGE = 0.4
 
 BASE_RESULTS_PATH = 'results'
 
-MIN_MUTATION_COUNT = 0
+MIN_MUTATION_COUNT = 2
 MAX_MUTATION_COUNT = 10
 
 # Base modes of transport weights (valuability).

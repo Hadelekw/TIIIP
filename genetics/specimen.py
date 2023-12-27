@@ -37,7 +37,7 @@ class Specimen:
         for tllogic in self.tlLogic.values():
             result += ' TL {}['.format(tllogic.id)
             for phase in tllogic._phases:
-                result += '{} '.format(''.join([state.value for state in phase.state]))
+                result += '{},'.format(''.join([state.value for state in phase.state]))
             result = result[:-1]
             result += ']'
         result += '\n'
