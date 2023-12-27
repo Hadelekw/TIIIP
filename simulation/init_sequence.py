@@ -12,7 +12,7 @@ import json
 import network_mixer
 from .routes_flows import Flow
 from .vehicle_classes import VEHICLE_CLASSES
-from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH, BASE_SUMO_CONFIG_FILE_PATH
+from settings import BASE_FLOW_FILE_PATH, VALIDATE_FLOW_DATA, BASE_ROAD_FILE_PATH, BASE_ROUTES_FILE_PATH, BASE_SUMO_CONFIG_FILE_PATH, VEHICLE_GENERATION_TIME
 
 
 def init(road_file_path=BASE_ROAD_FILE_PATH, flow_file_path=BASE_FLOW_FILE_PATH, routes_file_path=BASE_ROUTES_FILE_PATH, sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
@@ -49,7 +49,7 @@ def validate_flow_data(flow_data:dict):
     return True
 
 
-def solve_flow_matrix(flow_data:dict, components:dict, end=7200):
+def solve_flow_matrix(flow_data:dict, components:dict, end=VEHICLE_GENERATION_TIME):
     result = {}
     in_edges = {}; out_edges = {}
     for edge_id, data in flow_data.items():

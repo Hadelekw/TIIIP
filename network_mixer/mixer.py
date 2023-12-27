@@ -8,28 +8,30 @@ import copy
 from .components import *
 
 
-POSSIBLE_SIGNAL_STATES = {
-    'G': {
-        0: ['G', 'g', 's'],  # If there's no collision
-        1: ['r', 'y'],  # If there is collision
-    },
-    'g': {
-        0: ['G', 'g', 's'],
-        1: ['r', 'y'],
-    },
-    'r': {
-        0: ['r', 'y'],
-        1: ['G', 'g', 's'],
-    },
-    'y': {
-        0: ['y', 'G', 'g', 's'],
-        1: ['y', 'r'],
-    },
-    's': {
-        0: ['G', 'g', 'y', 'r'],
-        1: ['r', 'y']
-    },
-}
+# POSSIBLE_SIGNAL_STATES = {
+#     'G': {
+#         0: ['G', 'g', 's'],  # If there's no collision
+#         1: ['r', 'y'],  # If there is collision
+#     },
+#     'g': {
+#         0: ['G', 'g', 's'],
+#         1: ['r', 'y'],
+#     },
+#     'r': {
+#         0: ['r', 'y'],
+#         1: ['G', 'g', 's'],
+#     },
+#     'y': {
+#         0: ['y', 'G', 'g', 's'],
+#         1: ['y', 'r'],
+#     },
+#     's': {
+#         0: ['G', 'g', 'y', 'r'],
+#         1: ['r', 'y']
+#     },
+# }
+
+POSSIBLE_SIGNAL_STATES = ['G', 'r']
 
 
 def generate_random_new_phase(length, requests):
@@ -52,7 +54,8 @@ def generate_phase_states(length, requests):
             for j in range(len(foes)):
                 if int(foes[j]):
                     foe_values.append(states[j].value)
-            states.append(SignalState(random.choice(POSSIBLE_SIGNAL_STATES[random.choice(foe_values) if foe_values else random.choice(['G', 'r'])][1 if foe_values else 0])))
+            # states.append(SignalState(random.choice(POSSIBLE_SIGNAL_STATES[random.choice(foe_values) if foe_values else random.choice(['G', 'r'])][1 if foe_values else 0])))
+            states.append(SignalState(random.choice(POSSIBLE_SIGNAL_STATES)))
         else:
             states.append(SignalState(random.choice(['G', 'r'])))
     return states

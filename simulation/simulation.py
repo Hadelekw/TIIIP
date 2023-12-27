@@ -10,7 +10,7 @@ sys.path.append('../')
 
 import traci
 
-from settings import BASE_SUMO_CONFIG_FILE_PATH
+from settings import BASE_SUMO_CONFIG_FILE_PATH, SIMULATION_TIME
 
 
 DATA_SCHEMA = {
@@ -19,7 +19,7 @@ DATA_SCHEMA = {
     'collisions_per_step': [],
     'teleported_per_step': [],
     # 'co2_emissions_per_step': [],
-    # 'average_co2_emissions_per_step_per_liter': [],
+    'final_vehicles': [],
 }
 
 
@@ -30,7 +30,7 @@ def run(sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
     for key in data:
         data[key] = []
 
-    for step in range(1000):
+    for step in range(SIMULATION_TIME):
         data['arrived_per_step'].append(traci.simulation.getArrivedNumber())
         if 'vehicles_per_step' in DATA_SCHEMA:
             data['vehicles_per_step'].append(traci.vehicle.getIDCount())
@@ -40,9 +40,9 @@ def run(sumo_config_file_path=BASE_SUMO_CONFIG_FILE_PATH):
             data['teleported_per_step'].append(traci.simulation.getStartingTeleportNumber())
         if 'co2_emissions_per_step' in DATA_SCHEMA:
             data['co2_emissions_per_step'].append(sum([traci.vehicle.getCO2Emission(vehicle_id) for vehicle_id in traci.vehicle.getIDList()]))
-        # data['average_co2_emissions_per_step_per_liter'].append(list([co2_emission / area_of_simulation for co2_emission in data['co2_emissions_per_step']]))
         traci.simulationStep()
-    
+
+    data['final_vehicles'] = traci.vehicle.getIDCount()
     traci.close()
 
     return data

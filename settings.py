@@ -23,6 +23,7 @@ BASE_ROUTES_FILE_PATH = 'routes_file.rou.xml'
 # File collecting the road file and routes file for TraCI.
 BASE_SUMO_CONFIG_FILE_PATH = 'sumo_config.sumocfg'
 
+
 # Generations settings for the genetic algorithm
 NUMBER_OF_GENERATIONS = 60
 NUMBER_PER_GENERATION = 40
@@ -30,7 +31,10 @@ SPARED_PERCENTAGE = 0.4
 
 BASE_RESULTS_PATH = 'results'
 
-MIN_MUTATION_COUNT = 2
+VEHICLE_GENERATION_TIME = 750
+SIMULATION_LENGTH = 1.5 * VEHICLE_GENERATION_TIME
+
+MIN_MUTATION_COUNT = 1
 MAX_MUTATION_COUNT = 10
 
 # Base modes of transport weights (valuability).
