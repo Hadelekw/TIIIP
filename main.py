@@ -20,8 +20,9 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
             dirs.remove('log.log')
         last_dir = max([int(d) for d in dirs])
         os.makedirs('{}/{}'.format(results_path, last_dir + 1))
-    base_specimen = get_base_specimen()
-    population = genetics.generate_new_population(base_specimen)
+    base_specimen, average_flow = get_base_specimen()
+    # population = genetics.generate_new_population(base_specimen)
+    population = [genetics.mutate(base_specimen) for _ in range(n_per_generation)]
 
     log_file = open('{}/log.log'.format(results_path), 'w+')
     average_scores_per_generation = []
@@ -36,7 +37,7 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
         for j in range(n_per_generation):
             print('------------\nGENERATION {}/{} SPECIMEN {}/{}\n------------'.format(i + 1, n_generations, j + 1, n_per_generation))
             population[j].sim_data = simulation.run('{}/{}/{}.sumocfg'.format(results_path, i, j))
-            population[j].score = genetics.evaluate(population[j].sim_data)
+            population[j].score = genetics.evaluate(population[j].sim_data, average_flow)
             log_file.write(population[j].get_log(i, j))
         average_scores_per_generation.append(sum([specimen.score for specimen in population]) / len(population))
         max_score_per_generation.append(max([specimen.score for specimen in population]))
@@ -48,9 +49,9 @@ def main(n_generations=NUMBER_OF_GENERATIONS, n_per_generation=NUMBER_PER_GENERA
 
 
 def get_base_specimen(road_file_path=BASE_ROAD_FILE_PATH, flow_file_path=BASE_FLOW_FILE_PATH, routes_file_path=BASE_ROUTES_FILE_PATH, sumo_config_path=BASE_SUMO_CONFIG_FILE_PATH):
-    environment, components = simulation.init(road_file_path, flow_file_path, routes_file_path, sumo_config_path)
+    environment, components, average_flow = simulation.init(road_file_path, flow_file_path, routes_file_path, sumo_config_path)
     specimen = genetics.Specimen(environment, components, 'BASE')
-    return specimen
+    return specimen, average_flow
 
 
 def create_directories(results_path=BASE_RESULTS_PATH):

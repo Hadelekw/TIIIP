@@ -57,9 +57,11 @@ def crossover(parents):
     while result.tlLogic == parents[0].tlLogic:
         for key, value in parents[1].tlLogic.items():
             chance = random.random()
+            # if chance > 0.8:
+            #     result.tlLogic[key] = value
             if chance > 0.8:
-                result.tlLogic[key] = value
-            elif chance > 0.4:
                 result.tlLogic[key]._phases[random.randint(0, len(result.tlLogic[key]._phases))] = copy.deepcopy(random.choice(value._phases))
+            elif chance > 0.2:
+                result.tlLogic[key]._phases.append(copy.deepcopy(random.random.choice(value.phases)))
     result.update_components()
     return result

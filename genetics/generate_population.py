@@ -10,7 +10,7 @@ import copy
 import uuid
 
 import network_mixer.mixer as mixer
-from settings import NUMBER_PER_GENERATION, SPARED_PERCENTAGE
+from settings import NUMBER_PER_GENERATION, SPARED_PERCENTAGE, BAD_SURVIVAL_CHANCE, MAX_MUTATION_COUNT, MIN_MUTATION_COUNT
 from simulation import DATA_SCHEMA
 from . import *
 
@@ -24,8 +24,13 @@ def generate_population(population):
     result = []
     population_scores = [(specimen, specimen.score) for specimen in population]
     population_scores = sorted(population_scores, key=lambda x: x[1], reverse=True)
+    org_population_scores = population_scores
     population_scores = population_scores[:int(SPARED_PERCENTAGE * NUMBER_PER_GENERATION)]
     best_scorers = [score[0] for score in population_scores]
+
+    for _ in range(random.randint(MIN_MUTATION_COUNT, MAX_MUTATION_COUNT)):
+        if random.random() < BAD_SURVIVAL_CHANCE:
+            best_scorers.append(random.choice(org_population_scores)[0])
 
     result.extend(best_scorers)
     while len(result) < NUMBER_PER_GENERATION:

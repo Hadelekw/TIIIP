@@ -25,10 +25,11 @@ def init(road_file_path=BASE_ROAD_FILE_PATH, flow_file_path=BASE_FLOW_FILE_PATH,
     if VALIDATE_FLOW_DATA:
         validate_flow_data(flow_data)
     flow_data = solve_flow_matrix(flow_data, components)
+    average_flow = sum([flow.vehsPerHour for flow in flow_data.values()]) / len(flow_data)
     vehicle_types = get_vehicle_types()
     generate_rou_xml(environment, components, vehicle_types, flow_data, routes_file_path)
     generate_sumo_config(sumo_config_file_path, road_file_path, routes_file_path)
-    return environment, components
+    return environment, components, average_flow
 
 
 def validate_flow_data(flow_data:dict):
