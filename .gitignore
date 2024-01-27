@@ -4,7 +4,9 @@
 *.rou.xml
 *.sumocfg
 *.json
-/__pycache__/
-/*/__pycache__/
-/generations/
-/results/
+*.log
+__pycache__/
+*/__pycache__/
+generations/
+results/
+test_scripts/
